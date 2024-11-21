@@ -9,13 +9,13 @@ int main()
 {
     // Start with the main menu
     int option = menu();
-    while (true)
+
+    // Exit condition:
+    // The player chooses to play the game.
+    while (option != 0)
     {
         switch (option)
         {
-            case 0: // Start the game
-                // TODO
-                break;
             case 1: // Display main menu
                 option = menu();
                 break;
