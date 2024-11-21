@@ -8,7 +8,6 @@ private:
     static int score;
 public:
     static bool running;
-    static void start();
     static void initialize();
     static void update();
     static void cleanup();
@@ -108,7 +107,7 @@ public:
     // Iterate through every object in Level and render it to the screen.
     static void render();
     
-    static void loadNewLevel();
+    static void loadNewLevel(std::string fileName);
 };
 
 class UIManager {
