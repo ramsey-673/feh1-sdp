@@ -2,7 +2,13 @@
 
 int main()
 {
-    Game::update();
+
+    Game::initialize();
+    while (Game::running)
+    {
+        Game::update();
+    }
+    Game::cleanup();
 
     return 0;
 }
