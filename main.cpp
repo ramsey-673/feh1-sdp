@@ -132,7 +132,9 @@ int stats()
 
 int tutorial()
 {
-    // Tutorial text
+    // Tutorial text.
+    // NOTE: there may be extra spaces or places where a space was removed.
+    // This is because Proteus doesn't create new lines from whitespace resulting in broken words.
     LCD.Clear();
     LCD.WriteLine("< Back to Menu");
     LCD.WriteLine(" ");
@@ -159,8 +161,6 @@ int tutorial()
             while (LCD.Touch(&x, &y));
             return 1;
         }
-
-        LCD.Update();
     }
 }
 
@@ -196,7 +196,5 @@ int credits()
             while (LCD.Touch(&x, &y));
             return 1;
         }
-
-        LCD.Update();
     }
 }
