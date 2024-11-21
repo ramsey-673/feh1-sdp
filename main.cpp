@@ -51,16 +51,6 @@ void Graphics::render()
         }
     }
 
-    // Render all the enemies.
-    for (const Enemy enemy : Game::currentLevel.enemies)
-    {
-        if (!Camera::isInFrame(enemy)) {
-            Position screenPosition = Camera::getRelativePosition(enemy);
-            enemy.render(screenPosition);
-            free(&screenPosition);
-        }
-    }
-
     // Render the main character.
     Position screenPosition = Camera::getRelativePosition(Game::mainCharacter);
     Game::mainCharacter.render(screenPosition);
@@ -92,18 +82,13 @@ void UIManager::renderScore(int score)
 // Runs first every Update cycle.
 void Logic::updateLogic()
 {
-    Logic::updatePlayer();
-    Logic::updateEnemies();
-}
-void Logic::updatePlayer()
-{
     InputHandler::processInput();
-    Physics::applyGravity(Game::mainCharacter);
+    Physics::applyGravity();
 
     // Iterate through every tile and see if they collide with the player.
     for (Tile tile : Game::currentLevel.tiles)
     {
-        if (Physics::checkCollision(Game::mainCharacter, tile))
+        if (Physics::checkCollision(tile))
         {
             // do stuff idk
         }
@@ -112,29 +97,13 @@ void Logic::updatePlayer()
     // Iterate through every collectible and see if they collide with the player.
     for (Collectible collectible : Game::currentLevel.collectibles)
     {
-        if (Physics::checkCollision(Game::mainCharacter, collectible))
-        {
-            // stuff
-        }
-    }
-
-    // Iterate through every enemy and see if they collide with the player.
-    for (Enemy enemy : Game::currentLevel.enemies)
-    {
-        if (Physics::checkCollision(Game::mainCharacter, enemy))
+        if (Physics::checkCollision(collectible))
         {
             // stuff
         }
     }
 
     // stuff
-}
-void Logic::updateEnemies()
-{
-    for (Enemy enemy : Game::currentLevel.enemies)
-    {
-        // do stuff
-    }
 }
 
 /* InputHander methods */
@@ -147,16 +116,11 @@ void InputHandler::processInput()
 }
 
 /* Physics Methods */
-
-void Physics::applyGravity(Entity& entity)
+bool Physics::checkCollision(const Collectible& collectible)
 {
     // stuff
 }
-bool Physics::checkCollision(const Entity& entity1, const Entity& entity2)
-{
-    // stuff
-}
-bool Physics::checkCollision(const Entity& entity, const Tile& tile)
+bool Physics::checkCollision(const Tile& tile)
 {
     //stuff
 }
@@ -197,35 +161,30 @@ void Camera::zoom(float scale)
     // TODO
 }
 
-/* Sprite Methods */
-Sprite::Sprite(Position position)
-{
-    this->position = position;
+namespace std {
+    template <>
+    struct hash<Collectible> {
+        size_t operator()(const Collectible& c) const {
+            return hash<int>()(c.id());
+        }
+    };
+
+    template <>
+    struct hash<Tile> {
+        size_t operator()(const Tile& t) const {
+            return hash<int>()(t.id());
+        }
+    };
 }
 
-Sprite::~Sprite()
-{
-    free(&this->position);
-}
 /* Level Methods */
 Level::Level(const std::string& fileName)
 {
-    // TODO: Fix error
-    this->LoadFromFile(fileName);
+   
 }
+
 Level::~Level()
 {
     free(&this->tiles);
     free(&this->collectibles);
-    free(&this->enemies);
-}
-
-/* Texture Methods */
-Texture::Texture(const std::string& filename)
-{
-    // TODO
-}
-Texture::~Texture()
-{
-    // TODO
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include "FEHImages.h"
 
 class Game {
 private:
@@ -44,39 +45,48 @@ public:
 };
 // Represents a renderable object.
 class Sprite {
+private:
+    static int idCounter;
 public:
-    Position position;
-    Sprite(Position position);
+    
+    Sprite();
     ~Sprite();
     virtual void render(Position screenPosition) const;
-    
+
+    int getId();
     
 };
 
-// Represents a movine sprite.
-class Entity: public Sprite {
-};
 
 // Represents a player.
-class Player: public Entity {
-};
-
-// Represents an enemy.
-class Enemy: public Entity {
+class Player: public Sprite {
 };
 
 // Representes an item collectible by the player
 class Collectible: public Sprite {
+private:
+    int id;
+public:
+    Position position;
+    Collectible(Position position);
+    bool operator==(const Collectible& other) const;
+    int id() const;
 };
 
 // Representes a platform tile
 class Tile: public Sprite {
+private:
+    int id;
+public:
+    Position position;
+    Tile(Position position);
+    bool operator==(const Collectible& other) const;
+    int id() const;
 };
 
 // Stores all the data 
 class Level {
 public:
-    std::unordered_set<Enemy> enemies;
     std::unordered_set<Collectible> collectibles;
     std::unordered_set<Tile> tiles;
 
@@ -85,29 +95,17 @@ public:
 
     // Maps a char on the string vector to a texture.
     std::unordered_map<char, std::string> tileFileMap;
-
-    // Generates unordered of objects based on a vector of strings.
-    bool LoadFromFile(const std::string& filename);
-};
-
-// Represents a texture loaded into memory.
-class Texture {
-public:
-    Texture(const std::string& filename);
-    ~Texture();
 };
 
 // Handles the graphics.
 class Graphics {
 private:
     // Maps a filename to a texture object.
-    static std::unordered_map<std::string, Texture> fileTextureMap;
-    static void flushGraphicsMemory();
 public:
     // Iterate through every object in Level and render it to the screen.
     static void render();
-    
-    static void loadNewLevel(std::string fileName);
+    static std::unordered_map<std::string, FEHImage> fileTextureMap;
+
 };
 
 class UIManager {
@@ -120,13 +118,6 @@ public:
 
 // Handles game logic.
 class Logic {
-private:
-    
-    // Update's the player's state based on
-    // user input, collisions, and physics.
-    static void updatePlayer();
-    // Update's all the enemies' states based on collisions and physics.
-    static void updateEnemies();
 public:
     
     static void updateLogic();
@@ -151,8 +142,7 @@ public:
 
 class Physics {
 public:
-    static void applyGravity(Entity& entity);
-    static bool checkCollision(const Entity& entity1, const Entity& entity2);
-    static bool checkCollision(const Entity& entity, const Tile& tile);
-    static bool checkCollision(const Entity& entity, const Collectible& collectible);
+    static void applyGravity();
+    static bool checkCollision(const Tile& tile);
+    static bool checkCollision(const Collectible& collectible);
 };
