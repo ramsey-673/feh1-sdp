@@ -27,13 +27,10 @@ public:
 
 
 
-class Position
+struct Position
 {
-public:
     int x;
     int y;
-    Position(int x, int y);
-    Position();
 };
 
 
@@ -47,7 +44,7 @@ private:
 public:
     Sprite();
     ~Sprite();
-    virtual void render(Position screenPosition) const;
+    virtual void render(struct Position screenPosition) const;
 
     int getId();
 };
@@ -69,8 +66,8 @@ private:
     int id;
 
 public:
-    Position position;
-    Collectible(Position position);
+    struct Position position;
+    Collectible(struct Position position);
     bool operator==(const Collectible& other) const;
     int id() const;
 };
@@ -84,8 +81,8 @@ private:
     int id;
 
 public:
-    Position position;
-    Tile(Position position);
+    struct Position position;
+    Tile(struct Position position);
     bool operator==(const Collectible& other) const;
     int id() const;
 };
