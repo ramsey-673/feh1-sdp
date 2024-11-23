@@ -258,13 +258,6 @@ void Logic::updateLogic()
 
 /* InputHander methods */
 
-// Checks the state of user input
-// and changes the game's state appropriately.
-void InputHandler::processInput()
-{
-    // stuff
-}
-
 /* Physics Methods */
 bool Physics::checkCollision(const Collectible& collectible)
 {
