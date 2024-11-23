@@ -222,6 +222,7 @@ void Game::cleanup()
 
 Level Game::currentLevel;
 Position Player::position;
+Timer Game::gameTimer(0);
 
 void Player::render(struct Position screenPosition) {}
 void Tile::render(struct Position screenPosition) const {}
@@ -290,9 +291,3 @@ Level::~Level()
     free(&this->tiles);
     free(&this->collectibles);
 }
-
-/*
- * ui.h implementations
- */
-
-void UIManager::renderUI() {}

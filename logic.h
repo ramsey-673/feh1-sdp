@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "FEHImages.h"
+#include "FEHUtility.h"
 
 struct Position
 {
@@ -73,6 +74,49 @@ public:
     std::unordered_map<char, std::string> tileFileMap;
 };
 
+/**
+ * A timer that begins running when instantiated.
+ * Used to keep track of game's timer.
+ */
+class Timer
+{
+private:
+    /**
+     * The relative stop time of the timer.
+     */
+    double stopTime;
+public:
+    Timer(double duration);
+    /**
+     * Checke if the timer is ongoing.
+     * 
+     * @returns true if the timer is ongoing
+     * and false if it expired.
+     */
+    bool isTimeUp() const;
+    /**
+     * Calculates the time in seconds until the timer expires.
+     * 
+     * @returns time in seconds until timer expires
+     */
+    double getTimeLeft() const; // Get remaining time
+};
+
+Timer::Timer(double duration)
+{
+    this->stopTime = TimeNow() + duration;
+}
+
+bool Timer::isTimeUp() const
+{
+    return TimeNow() > this->stopTime;
+}
+
+double Timer::getTimeLeft() const
+{
+    return this->stopTime - TimeNow();
+}
+
 class Game
 {
 public:
@@ -82,12 +126,10 @@ public:
     static void cleanup();
 
     static Level currentLevel;
+
+    static int score;
+    static Timer gameTimer;
 };
-
-
-
-
-
 
 
 class Physics
