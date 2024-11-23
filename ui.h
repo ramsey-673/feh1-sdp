@@ -5,6 +5,9 @@
 #define TIMER_X 0
 #define TIMER_Y 50
 
+#define SCORE_COLOR WHITE
+#define TIMER_COLOR WHITE
+
 #define OUTER_CIRCLE_RADIUS 50
 #define INNER_CIRCLE_RADIUS 10
 
@@ -38,7 +41,8 @@ private:
     static void renderScore(int score);
 public:
     /**
-     * Draws the game's gameplay UI to the screen.
+     * Draws the game's gameplay UI to the screen
+     * excluding player input UI.
      */
     static void renderUI();
 };
@@ -46,17 +50,26 @@ public:
 void UIManager::renderUI()
 {
     UIManager::renderTimer(Game::gameTimer.getTimeLeft());
+    UIManager::renderScore(Game::score);
 }
 
 void UIManager::renderTimer(double timeLeft)
 {
+    //Generate output message.
     std::string timerMessage = "Time left: " + std::to_string(timeLeft); 
+
+    // Draw timer to screen.
+    LCD.SetFontColor(TIMER_COLOR);
     LCD.WriteAt(timerMessage, TIMER_X, TIMER_Y);
 }
 
 void UIManager::renderScore(int score)
 {
+    // Generate output message.
     std::string scoreMessage = "Score: " + std::to_string(score);
+
+    // Draw score to screen.
+    LCD.SetFontColor(SCORE_COLOR);
     LCD.WriteAt(scoreMessage, SCORE_X, SCORE_Y);
 }
 
@@ -91,6 +104,7 @@ void InputHandler::processInput()
 
     // Check if the player is touching the screen on this frame.
     // If they are, update the values inside x and y.
+    // Casts float input into integer position.
     bool currentState = LCD.Touch(&touch.x, &touch.y);
 
     if (currentState)

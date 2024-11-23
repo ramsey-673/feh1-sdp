@@ -223,6 +223,7 @@ void Game::cleanup()
 Level Game::currentLevel;
 Position Player::position;
 Timer Game::gameTimer(0);
+int Game::score = 0;
 
 void Player::render(struct Position screenPosition) {}
 void Tile::render(struct Position screenPosition) const {}
