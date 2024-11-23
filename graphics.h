@@ -1,36 +1,162 @@
 #pragma once
 
+#define PROTEUS_WIDTH 319
+#define PROTEUS_HEIGHT 239
+#define DEFAULT_SPRITE_SIZE 16
+
 #include "logic.h"
+#include <unordered_map>
 
 #include "FEHImages.h"
 
 
-
-class Camera {
+/**
+ * Handles the relationship between game position and screen position.
+ * Essentially functions as the game's "camera."
+ */
+class Camera
+{
 private:
-    static Position corner1;
-    static Position corner2;
+    /**
+     * The upper-left corner (origin) of the game's camera.
+     */
+    static Position origin;
 public:
-    Camera(Position corner1, Position corner2);
-    ~Camera();
-    // Returns whether or not the camera can see the sprite.
-    static bool isInFrame(Sprite sprite);
-    // Returns the position of the sprite
-    // relative to the position of the camera.
-    static Position getRelativePosition(Sprite sprite);
-    static void moveTo(Position targetPosition);
-    static void zoom(float scale);
+    /**
+     * Returns the screen position of parameter &spritePosition
+     * based on the camera.
+     * 
+     * @param &gamePosition
+     *      game position to convert to screen position
+     * @returns screen position of parameter based on camera
+     */
+    static Position getScreenPosition(const Position &gamePosition);
 
+    /**
+     * Returns true if the sprite is visible from the camera
+     * and false if it not.
+     * 
+     * @param &screenPosition
+     *      the screen position to check
+     * @param spriteWidth
+     *      the width of the game object's sprite
+     * @param spriteHeight
+     *      the height of the game object's sprite
+     * @returns whether the sprite object is on the screen
+     */
+    static bool isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight);
+    static bool isInFrame(const Position &screenPosition);
+
+   /**
+    * Changes the location of the camera's origin
+    * to ensure that the game object is in the center of the camera.
+    * 
+    * @param &targetPosition
+    *       the game position of the game object to follow
+    * @param spriteWidth
+    *       the width of the game object to follow's sprite
+    * @param spriteHeight
+    *       the height of the game object to follow's sprite
+    */
+    static void follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight);
+    static void follow(const Position &targetPosition);
     
 };
 
-// Handles the graphics.
-class Graphics {
+Position Camera::getScreenPosition(const Position &gamePosition)
+{
+    Position relativePosition;
+
+    relativePosition.x = gamePosition.x - Camera::origin.x;
+    relativePosition.y = gamePosition.y - Camera::origin.y;
+
+    return relativePosition;
+}
+
+bool Camera::isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight)
+{
+    if (screenPosition.x + spriteWidth < 0 ||
+        screenPosition.x > PROTEUS_WIDTH ||
+        screenPosition.y + spriteHeight < 0 ||
+        screenPosition.y > PROTEUS_HEIGHT)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+bool Camera::isInFrame(const Position &screenPosition)
+{
+    return Camera::isInFrame(screenPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+void Camera::follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight)
+{
+    Camera::origin.x = targetPosition.x - PROTEUS_WIDTH / 2 + spriteWidth / 2;
+    Camera::origin.y = targetPosition.y - PROTEUS_HEIGHT / 2 + spriteHeight / 2;
+}
+void Camera::follow(const Position &targetPosition)
+{
+    Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+/**
+ * Responsible for the game's graphics.
+ * Does not handle UI graphics.
+ */
+class Graphics
+{
 private:
     // Maps a filename to a texture object.
 public:
-    // Iterate through every object in Level and render it to the screen.
+    /**
+     * Iterate through every game object and render them to the screen.
+     */
     static void render();
+    /**
+     * A hashmap that maps texture filenames
+     * to the texture's memory location - an FEHImage.
+     */
     static std::unordered_map<std::string, FEHImage> fileTextureMap;
 
 };
+
+void Graphics::render()
+{
+    // Ensure the camera stays centered on the player
+    // during this rendering cycle.
+    Camera::follow(Player::position);
+
+    // Iterate through every tile in the level.
+    for (const Tile tile : Game::currentLevel.tiles)
+    {
+        // Find the screen position of the current tile.
+        Position screenPosition = Camera::getScreenPosition(tile.position);
+
+        // Render the tile if the camera can see it.
+        if (Camera::isInFrame(screenPosition)) {
+            tile.render(screenPosition);
+        }
+    }
+
+    // Iterate through every collectible in the level.
+    for (const Collectible collectible : Game::currentLevel.collectibles)
+    {
+        // Find the screen position of the current collectible.
+        Position screenPosition = Camera::getScreenPosition(collectible.position);
+
+        // Render the collectible if the camera can see it.
+        if (Camera::isInFrame(screenPosition)) {
+            collectible.render(screenPosition);
+        }
+    }
+
+    // Find the screen position of the player.
+    Position screenPosition = Camera::getScreenPosition(Player::position);
+    // Render the player to the screen.
+    // No need to check if the player is in frame
+    // because they are always in frame.
+    Game::mainCharacter.render(screenPosition);
+}

@@ -54,7 +54,8 @@ public:
 // Represents a player.
 class Player: public Sprite
 {
-
+public:
+    static Position position;
 };
 
 
