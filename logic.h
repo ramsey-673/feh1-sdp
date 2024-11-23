@@ -3,29 +3,9 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
-
-
-class Game
-{
-private:
-    static int score;
-
-public:
-    static bool running;
-    static void initialize();
-    static void update();
-    static void cleanup();
-
-    static Level currentLevel;
-    static Player mainCharacter;
-    static Timer gameTimer;
-
-    static int getScore();
-};
-
-
+#include "FEHImages.h"
 
 struct Position
 {
@@ -35,58 +15,78 @@ struct Position
 
 
 
-// Represents a renderable object.
-class Sprite
-{
-private:
-    static int idCounter;
-
-public:
-    Sprite();
-    ~Sprite();
-    virtual void render(struct Position screenPosition) const;
-
-    int getId();
-};
-
-
 
 // Represents a player.
-class Player: public Sprite
+class Player
 {
+    static FEHImage *texture;
+
 public:
     static Position position;
+    static void render(struct Position screenPosition);
 };
 
-
-
 // Representes an item collectible by the player
-class Collectible: public Sprite
+class Collectible
 {
 private:
+    static int quantity;
     int id;
+    FEHImage *texture;
 
 public:
     struct Position position;
-    Collectible(struct Position position);
-    bool operator==(const Collectible& other) const;
-    int id() const;
+    Collectible(struct Position position, std::string texture);
+    int getId() const;
+    void render(struct Position screenPosition) const;
 };
 
 
 
 // Representes a platform tile
-class Tile: public Sprite
+class Tile
 {
 private:
+    static int quantity;
     int id;
+    FEHImage *texture;
 
 public:
     struct Position position;
-    Tile(struct Position position);
-    bool operator==(const Collectible& other) const;
-    int id() const;
+    Tile(struct Position position, std::string texture);
+    int getId() const;
+    void render(struct Position screenPosition) const;
 };
+
+// Stores all the data 
+class Level
+{
+public:
+    std::vector<Collectible> collectibles;
+    std::vector<Tile> tiles;
+
+    Level(const std::string &fileName);
+    Level();
+    ~Level();
+
+    // Maps a char on the string vector to a texture.
+    std::unordered_map<char, std::string> tileFileMap;
+};
+
+class Game
+{
+public:
+    static bool running;
+    static void initialize();
+    static void update();
+    static void cleanup();
+
+    static Level currentLevel;
+};
+
+
+
+
 
 
 
@@ -105,20 +105,4 @@ class Logic
 {
 public:
     static void updateLogic();
-};
-
-
-
-// Stores all the data 
-class Level
-{
-public:
-    std::unordered_set<Collectible> collectibles;
-    std::unordered_set<Tile> tiles;
-
-    Level(const std::string& fileName);
-    ~Level();
-
-    // Maps a char on the string vector to a texture.
-    std::unordered_map<char, std::string> tileFileMap;
 };

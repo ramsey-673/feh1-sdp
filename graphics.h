@@ -22,6 +22,7 @@ private:
      */
     static Position origin;
 public:
+
     /**
      * Returns the screen position of parameter &spritePosition
      * based on the camera.
@@ -63,45 +64,6 @@ public:
     
 };
 
-Position Camera::getScreenPosition(const Position &gamePosition)
-{
-    Position relativePosition;
-
-    relativePosition.x = gamePosition.x - Camera::origin.x;
-    relativePosition.y = gamePosition.y - Camera::origin.y;
-
-    return relativePosition;
-}
-
-bool Camera::isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight)
-{
-    if (screenPosition.x + spriteWidth < 0 ||
-        screenPosition.x > PROTEUS_WIDTH ||
-        screenPosition.y + spriteHeight < 0 ||
-        screenPosition.y > PROTEUS_HEIGHT)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}
-bool Camera::isInFrame(const Position &screenPosition)
-{
-    return Camera::isInFrame(screenPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
-}
-
-void Camera::follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight)
-{
-    Camera::origin.x = targetPosition.x - PROTEUS_WIDTH / 2 + spriteWidth / 2;
-    Camera::origin.y = targetPosition.y - PROTEUS_HEIGHT / 2 + spriteHeight / 2;
-}
-void Camera::follow(const Position &targetPosition)
-{
-    Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
-}
-
 /**
  * Responsible for the game's graphics.
  * Does not handle UI graphics.
@@ -122,41 +84,3 @@ public:
     static std::unordered_map<std::string, FEHImage> fileTextureMap;
 
 };
-
-void Graphics::render()
-{
-    // Ensure the camera stays centered on the player
-    // during this rendering cycle.
-    Camera::follow(Player::position);
-
-    // Iterate through every tile in the level.
-    for (const Tile tile : Game::currentLevel.tiles)
-    {
-        // Find the screen position of the current tile.
-        Position screenPosition = Camera::getScreenPosition(tile.position);
-
-        // Render the tile if the camera can see it.
-        if (Camera::isInFrame(screenPosition)) {
-            tile.render(screenPosition);
-        }
-    }
-
-    // Iterate through every collectible in the level.
-    for (const Collectible collectible : Game::currentLevel.collectibles)
-    {
-        // Find the screen position of the current collectible.
-        Position screenPosition = Camera::getScreenPosition(collectible.position);
-
-        // Render the collectible if the camera can see it.
-        if (Camera::isInFrame(screenPosition)) {
-            collectible.render(screenPosition);
-        }
-    }
-
-    // Find the screen position of the player.
-    Position screenPosition = Camera::getScreenPosition(Player::position);
-    // Render the player to the screen.
-    // No need to check if the player is in frame
-    // because they are always in frame.
-    Game::mainCharacter.render(screenPosition);
-}

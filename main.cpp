@@ -218,68 +218,20 @@ void Game::cleanup()
 
 
 
-/* Graphics Methods */
+/*
+ * logic.h implementations
+ */
 
-// Renders graphics to the screen.
-// Runs after logic is updated
-// every Update cycle.
-void Graphics::render()
-{
-    // Render all the static tiles.
-    for (const Tile tile : Game::currentLevel.tiles)
-    {
-        if (!Camera::isInFrame(tile)) {
-            Position screenPosition = Camera::getRelativePosition(tile);
-            tile.render(screenPosition);
-            free(&screenPosition);
-        }
-    }
+Level Game::currentLevel;
+Position Player::position;
 
-    // Render all the collectibles.
-    for (const Collectible collectible : Game::currentLevel.collectibles)
-    {
-        if (!Camera::isInFrame(collectible)) {
-            Position screenPosition = Camera::getRelativePosition(collectible);
-            collectible.render(screenPosition);
-            free(&screenPosition);
-        }
-    }
-
-    // Render the main character.
-    Position screenPosition = Camera::getRelativePosition(Game::mainCharacter);
-    Game::mainCharacter.render(screenPosition);
-    free(&screenPosition);
-}
+void Player::render(struct Position screenPosition) {}
+void Tile::render(struct Position screenPosition) const {}
+void Collectible::render(struct Position screenPosition) const {}
 
 
 
-/* UIManager Methods */
 
-// Renders the game's UI.
-// Runs after graphics rendering
-// in the Update cycle.
-void UIManager::renderUI()
-{
-    UIManager::renderTimer(Game::gameTimer.getTimeLeft());
-    UIManager::renderScore(Game::getScore());
-}
-
-void UIManager::renderTimer(int timeLeft)
-{
-
-}
-
-void UIManager::renderScore(int score)
-{
-
-}
-
-
-
-/* Logic Methods */
-
-// Updates the game's logic.
-// Runs first every Update cycle.
 void Logic::updateLogic()
 {
     InputHandler::processInput();
@@ -328,54 +280,7 @@ bool Physics::checkCollision(const Tile& tile)
     //stuff
 }
 
-/* Camera Methods */
-Camera::Camera(Position corner1, Position corner2)
-{
-    this->corner1 = corner1;
-    this->corner2 = corner2;
-}
-
-Camera::~Camera()
-{
-    free(&this->corner1);
-    free(&this->corner2);
-}
-
-bool Camera::isInFrame(Sprite sprite)
-{
-    // TODO
-}
-
-Position Camera::getRelativePosition(Sprite sprite)
-{
-    // TODO
-}
-
-void Camera::moveTo(Position targetPosition)
-{
-    // TODO
-}
-
-void Camera::zoom(float scale)
-{
-    // TODO
-}
-
-namespace std {
-    template <>
-    struct hash<Collectible> {
-        size_t operator()(const Collectible& c) const {
-            return hash<int>()(c.id());
-        }
-    };
-
-    template <>
-    struct hash<Tile> {
-        size_t operator()(const Tile& t) const {
-            return hash<int>()(t.id());
-        }
-    };
-}
+void Physics::applyGravity() {}
 
 /* Level Methods */
 Level::Level(const std::string& fileName)
@@ -383,8 +288,114 @@ Level::Level(const std::string& fileName)
    
 }
 
+Level::Level() {}
+
 Level::~Level()
 {
     free(&this->tiles);
     free(&this->collectibles);
 }
+
+/*
+ * render.h implementations
+ */
+
+Position Camera::origin = {0, 0};
+
+Position Camera::getScreenPosition(const Position &gamePosition)
+{
+    // Initialize return struct on the stack.
+    Position screenPosition;
+
+    // Offset the game position by the camera's origin.
+    screenPosition.x = gamePosition.x - Camera::origin.x;
+    screenPosition.y = gamePosition.y - Camera::origin.y;
+
+    // Return a copy of the resulting screen position.
+    return screenPosition;
+}
+
+bool Camera::isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight)
+{
+    // Check if the game object is within the camera's bounds.
+    if (screenPosition.x + spriteWidth < 0 ||  // Is the sprite to the left of the camera?
+        screenPosition.x > PROTEUS_WIDTH ||    // Is the sprite to the right of the camera?
+        screenPosition.y + spriteHeight < 0 || // Is the sprite above the camera?
+        screenPosition.y > PROTEUS_HEIGHT)     // Is the sprite below the camera?
+    {
+        // The game object is outside one of the camera's bounds.
+        return false;
+    }
+    else
+    {
+        // The game object is within all of the camera's bounds.
+        return true;
+    }
+}
+bool Camera::isInFrame(const Position &screenPosition)
+{
+    // Return result of overloaded method with default values.
+    return Camera::isInFrame(screenPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+void Camera::follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight)
+{
+    // Set the camera's origin one half-screen above and to the left of the sprite's origin.
+    Camera::origin.x = targetPosition.x - PROTEUS_WIDTH / 2;
+    Camera::origin.y = targetPosition.y - PROTEUS_HEIGHT / 2;
+
+    // Offset the camera's position by the sprite's size,
+    // so the center of the camera is at the center of the sprite.
+    Camera::origin.x += spriteWidth / 2;
+    Camera::origin.y += spriteHeight / 2;
+}
+void Camera::follow(const Position &targetPosition)
+{
+    // Return result of overloaded method with default values.
+    Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+void Graphics::render()
+{
+    // Ensure the camera stays centered on the player
+    // during this rendering cycle.
+    Camera::follow(Player::position);
+
+    // Iterate through every tile in the level.
+    for (const Tile tile : Game::currentLevel.tiles)
+    {
+        // Find the screen position of the current tile.
+        Position screenPosition = Camera::getScreenPosition(tile.position);
+
+        // Render the tile if the camera can see it.
+        if (Camera::isInFrame(screenPosition)) {
+            tile.render(screenPosition);
+        }
+    }
+
+    // Iterate through every collectible in the level.
+    for (const Collectible collectible : Game::currentLevel.collectibles)
+    {
+        // Find the screen position of the current collectible.
+        Position screenPosition = Camera::getScreenPosition(collectible.position);
+
+        // Render the collectible if the camera can see it.
+        if (Camera::isInFrame(screenPosition)) {
+            collectible.render(screenPosition);
+        }
+    }
+
+    // Find the screen position of the player.
+    Position screenPosition = Camera::getScreenPosition(Player::position);
+
+    // Render the player to the screen.
+    // No need to check if the player is in frame
+    // because they are always in frame.
+    Player::render(screenPosition);
+}
+
+/*
+ * ui.h implementations
+ */
+
+void UIManager::renderUI() {}
