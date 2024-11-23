@@ -85,12 +85,12 @@ Position InputHandler::touchOrigin = {-1, -1};
 void InputHandler::processInput()
 {
     // The finger's position on this frame.
-    // Undefined values are -1.
-    int touchX = -1, touchY = -1;
+    // Undefined position is (-1, -1).
+    Position touch = {-1, -1};
 
     // Check if the player is touching the screen on this frame.
     // If they are, update the values inside x and y.
-    bool currentState = LCD.Touch(&touchX, &touchY);
+    bool currentState = LCD.Touch(&touch.x, &touch.y);
 
     if (currentState)
     {
@@ -105,20 +105,66 @@ void InputHandler::processInput()
             // on this frame.
 
             // Update the origin of the outer circle.
-            InputHandler::touchOrigin = {touchX, touchY};
+            InputHandler::touchOrigin = {touch.x, touch.y};
         }
+
+        /* Calculate input offset from touch origin. */
+
+        Position touchOriginOffset = {touch.x - InputHandler::touchOrigin.x,
+            touch.y - InputHandler::touchOrigin.y};
+
+        // Check if the player's x input exceeds the outer circle.
+        if (std::abs(touchOriginOffset.x) > OUTER_CIRCLE_RADIUS)
+        {
+            // Cap offsetX to the outer circle radius.
+            // OffsetX will never be zero if it reached here.
+            if (touchOriginOffset.x > 0) {
+                // Positive offset
+                touchOriginOffset.x = OUTER_CIRCLE_RADIUS;
+            }
+            else
+            {
+                // Negative offset
+                touchOriginOffset.x = -OUTER_CIRCLE_RADIUS;
+            }
+        }
+
+        // Check if the player's y input exceeds the outer circle.
+        if (std::abs(touchOriginOffset.y) > OUTER_CIRCLE_RADIUS)
+        {
+            // Cap offsetX to the outer circle radius.
+            // OffsetX will never be zero if it reached here.
+            if (touchOriginOffset.y > 0) {
+                // Positive offset
+                touchOriginOffset.y = OUTER_CIRCLE_RADIUS;
+            }
+            else
+            {
+                // Negative offset
+                touchOriginOffset.y = -OUTER_CIRCLE_RADIUS;
+            }
+        }
+
+        /* Draw input UI */
 
         // Draw the outer circle.
         LCD.SetFontColor(OUTER_CIRCLE_COLOR);
         LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
 
+        // Calculate the position of the inner circle,
+        // which is at the player's touch location if its within the outer circle
+        // or at the circumference of the outer circle if the player's touch exceeds it.
+        Position innerCircleOrigin = {InputHandler::touchOrigin.x + touchOriginOffset.x,
+            InputHandler::touchOrigin.y + touchOriginOffset.y};
+
         // Draw the inner circle.
         LCD.SetFontColor(INNER_CIRCLE_COLOR);
-        LCD.DrawCircle(touchX, touchY, INNER_CIRCLE_RADIUS);
+        LCD.DrawCircle(innerCircleOrigin.x, innerCircleOrigin.y, INNER_CIRCLE_RADIUS);
 
-        int playerMovementX = std::min(touchX - InputHandler::touchOrigin.x, OUTER_CIRCLE_RADIUS);
+        // Calculate player's x movement as a real scalar from [-1, 1].
+        float playerMovementX = (float)touchOriginOffset.x / OUTER_CIRCLE_RADIUS;
 
-        // TODO: Update player's position based on input.
+        // TODO: Update player's horizontal position based on input.
     }
     else
     {
