@@ -70,6 +70,7 @@ private:
     static bool previousState;
     /**
      * The screen position where the player initially put their finger down.
+     * Undefined position is (-1, -1).
      */
     static Position touchOrigin;
 public:
@@ -173,6 +174,9 @@ void InputHandler::processInput()
             // The user released their finger
             // on this frame.
 
+            // Update touchOrigin to undefined values.
+            InputHandler::touchOrigin = {-1, -1};
+
             // TODO: Make the player jump.
         }
         else
@@ -182,6 +186,6 @@ void InputHandler::processInput()
         }
     }
 
-    // Update the previous state to the current state.
+    // Update the previous touch state to the current touch state.
     InputHandler::previousState = currentState;
 }
