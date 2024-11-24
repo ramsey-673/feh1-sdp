@@ -1,5 +1,12 @@
 #pragma once
 
+#include "logic.h"
+
+#include "FEHLCD.h"
+
+#include <cmath>
+#include <string>
+
 #define SCORE_X 0
 #define SCORE_Y 0
 #define TIMER_X 0
@@ -13,8 +20,6 @@
 
 #define OUTER_CIRCLE_COLOR WHITE
 #define INNER_CIRCLE_COLOR WHITE
-
-#include <string>
 
 
 // Menu functions
@@ -85,7 +90,7 @@ private:
      * The screen position where the player initially put their finger down.
      * Undefined position is (-1, -1).
      */
-    static Position touchOrigin;
+    static Vector touchOrigin;
 public:
     /**
      * Updates the game's state based on user's input on the current frame.
@@ -94,13 +99,13 @@ public:
 };
 
 bool InputHandler::previousState = false;
-Position InputHandler::touchOrigin = {-1, -1};
+Vector InputHandler::touchOrigin = {-1, -1};
 
 void InputHandler::processInput()
 {
     // The finger's position on this frame.
     // Undefined position is (-1, -1).
-    Position touch = {-1, -1};
+    Vector touch = {-1, -1};
 
     // Check if the player is touching the screen on this frame.
     // If they are, update the values inside x and y.
@@ -125,11 +130,11 @@ void InputHandler::processInput()
 
         /* Calculate input offset from touch origin. */
 
-        Position touchOriginOffset = {touch.x - InputHandler::touchOrigin.x,
+        Vector touchOriginOffset = {touch.x - InputHandler::touchOrigin.x,
             touch.y - InputHandler::touchOrigin.y};
 
         // Check if the player's x input exceeds the outer circle.
-        if (std::abs(touchOriginOffset.x) > OUTER_CIRCLE_RADIUS)
+        if (std::fabs(touchOriginOffset.x) > OUTER_CIRCLE_RADIUS)
         {
             // Cap offsetX to the outer circle radius.
             // OffsetX will never be zero if it reached here.
@@ -145,7 +150,7 @@ void InputHandler::processInput()
         }
 
         // Check if the player's y input exceeds the outer circle.
-        if (std::abs(touchOriginOffset.y) > OUTER_CIRCLE_RADIUS)
+        if (std::fabs(touchOriginOffset.y) > OUTER_CIRCLE_RADIUS)
         {
             // Cap offsetX to the outer circle radius.
             // OffsetX will never be zero if it reached here.
@@ -169,7 +174,7 @@ void InputHandler::processInput()
         // Calculate the position of the inner circle,
         // which is at the player's touch location if its within the outer circle
         // or at the circumference of the outer circle if the player's touch exceeds it.
-        Position innerCircleOrigin = {InputHandler::touchOrigin.x + touchOriginOffset.x,
+        Vector innerCircleOrigin = {InputHandler::touchOrigin.x + touchOriginOffset.x,
             InputHandler::touchOrigin.y + touchOriginOffset.y};
 
         // Draw the inner circle.

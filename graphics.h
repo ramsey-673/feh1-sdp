@@ -20,7 +20,7 @@ private:
     /**
      * The upper-left corner (origin) of the game's camera.
      */
-    static Position origin;
+    static Vector origin;
 public:
 
     /**
@@ -31,7 +31,7 @@ public:
      *      game position to convert to screen position
      * @returns screen position of parameter based on camera
      */
-    static Position getScreenPosition(const Position &gamePosition);
+    static Vector getScreenPosition(const Vector &gamePosition);
 
     /**
      * Returns true if the sprite is visible from the camera
@@ -45,8 +45,8 @@ public:
      *      the height of the game object's sprite
      * @returns whether the sprite object is on the screen
      */
-    static bool isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight);
-    static bool isInFrame(const Position &screenPosition);
+    static bool isInFrame(const Vector &screenPosition, const int spriteWidth, const int spriteHeight);
+    static bool isInFrame(const Vector &screenPosition);
 
    /**
     * Changes the location of the camera's origin
@@ -59,8 +59,8 @@ public:
     * @param spriteHeight
     *       the height of the game object to follow's sprite
     */
-    static void follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight);
-    static void follow(const Position &targetPosition);
+    static void follow(const Vector &targetPosition, const int spriteWidth, const int spriteHeight);
+    static void follow(const Vector &targetPosition);
     
 };
 
@@ -87,12 +87,12 @@ public:
 
 /* Implementations */
 
-Position Camera::origin = {0, 0};
+Vector Camera::origin = {0, 0};
 
-Position Camera::getScreenPosition(const Position &gamePosition)
+Vector Camera::getScreenPosition(const Vector &gamePosition)
 {
     // Initialize return struct on the stack.
-    Position screenPosition;
+    Vector screenPosition;
 
     // Offset the game position by the camera's origin.
     screenPosition.x = gamePosition.x - Camera::origin.x;
@@ -102,7 +102,7 @@ Position Camera::getScreenPosition(const Position &gamePosition)
     return screenPosition;
 }
 
-bool Camera::isInFrame(const Position &screenPosition, const int spriteWidth, const int spriteHeight)
+bool Camera::isInFrame(const Vector &screenPosition, const int spriteWidth, const int spriteHeight)
 {
     // Check if the game object is within the camera's bounds.
     if (screenPosition.x + spriteWidth < 0 ||  // Is the sprite to the left of the camera?
@@ -119,13 +119,13 @@ bool Camera::isInFrame(const Position &screenPosition, const int spriteWidth, co
         return true;
     }
 }
-bool Camera::isInFrame(const Position &screenPosition)
+bool Camera::isInFrame(const Vector &screenPosition)
 {
     // Return result of overloaded method with default values.
     return Camera::isInFrame(screenPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
 }
 
-void Camera::follow(const Position &targetPosition, const int spriteWidth, const int spriteHeight)
+void Camera::follow(const Vector &targetPosition, const int spriteWidth, const int spriteHeight)
 {
     // Set the camera's origin one half-screen above and to the left of the sprite's origin.
     Camera::origin.x = targetPosition.x - PROTEUS_WIDTH / 2;
@@ -136,7 +136,7 @@ void Camera::follow(const Position &targetPosition, const int spriteWidth, const
     Camera::origin.x += spriteWidth / 2;
     Camera::origin.y += spriteHeight / 2;
 }
-void Camera::follow(const Position &targetPosition)
+void Camera::follow(const Vector &targetPosition)
 {
     // Return result of overloaded method with default values.
     Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
@@ -152,7 +152,7 @@ void Graphics::render()
     for (const Tile tile : Game::currentLevel.tiles)
     {
         // Find the screen position of the current tile.
-        Position screenPosition = Camera::getScreenPosition(tile.position);
+        Vector screenPosition = Camera::getScreenPosition(tile.position);
 
         // Render the tile if the camera can see it.
         if (Camera::isInFrame(screenPosition)) {
@@ -164,7 +164,7 @@ void Graphics::render()
     for (const Collectible collectible : Game::currentLevel.collectibles)
     {
         // Find the screen position of the current collectible.
-        Position screenPosition = Camera::getScreenPosition(collectible.position);
+        Vector screenPosition = Camera::getScreenPosition(collectible.position);
 
         // Render the collectible if the camera can see it.
         if (Camera::isInFrame(screenPosition)) {
@@ -173,7 +173,7 @@ void Graphics::render()
     }
 
     // Find the screen position of the player.
-    Position screenPosition = Camera::getScreenPosition(Player::position);
+    Vector screenPosition = Camera::getScreenPosition(Player::position);
 
     // Render the player to the screen.
     // No need to check if the player is in frame

@@ -1,5 +1,4 @@
 #include "logic.h"
-#include "graphics.h"
 #include "ui.h"
 
 #include "FEHLCD.h"
@@ -30,6 +29,8 @@ int main()
                 break;
         }
     }
+
+    while(true) Game::update();
 
     return 0;
 }
@@ -64,7 +65,7 @@ int menu()
             touched)
         {
             while (LCD.Touch(&x, &y));
-            return 1; // Change this to 0 when functionality for the play button is added
+            return 0;
         }
 
         // Stats button
@@ -195,93 +196,4 @@ int credits()
             return 1;
         }
     }
-}
-
-/*
- * logic.h implementations
- */
-
-/* Game Methods */
-
-void Game::initialize()
-{
-    // TODO
-}
-
-void Game::update()
-{
-    Logic::updateLogic();
-    Graphics::render();
-    UIManager::renderUI();
-}
-
-void Game::cleanup()
-{
-    // TODO
-}
-
-Level Game::currentLevel;
-Position Player::position;
-Timer Game::gameTimer(0);
-int Game::score = 0;
-
-void Player::render(struct Position screenPosition) {}
-void Tile::render(struct Position screenPosition) const {}
-void Collectible::render(struct Position screenPosition) const {}
-
-void Logic::updateLogic()
-{
-    InputHandler::processInput();
-    Physics::applyGravity();
-
-    // Iterate through every tile and see if they collide with the player.
-    for (Tile tile : Game::currentLevel.tiles)
-    {
-        if (Physics::checkCollision(tile))
-        {
-            // do stuff idk
-        }
-    }
-
-    // Iterate through every collectible and see if they collide with the player.
-    for (Collectible collectible : Game::currentLevel.collectibles)
-    {
-        if (Physics::checkCollision(collectible))
-        {
-            // stuff
-        }
-    }
-
-    // stuff
-}
-
-
-
-/* InputHander methods */
-
-/* Physics Methods */
-bool Physics::checkCollision(const Collectible& collectible)
-{
-    // stuff
-}
-
-bool Physics::checkCollision(const Tile& tile)
-{
-    //stuff
-}
-
-void Physics::applyGravity() {}
-
-/* Level Methods */
-Level::Level(const std::string& fileName)
-{
-   
-}
-
-Level::Level() {}
-
-Level::~Level()
-{
-    free(&this->tiles);
-    free(&this->collectibles);
 }
