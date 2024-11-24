@@ -155,7 +155,7 @@ void Graphics::render()
         Vector screenPosition = Camera::getScreenPosition(tile.position);
 
         // Render the tile if the camera can see it.
-        if (Camera::isInFrame(screenPosition)) {
+        if (Camera::isInFrame(screenPosition, tile.size.x, tile.size.y)) {
             tile.render(screenPosition);
         }
     }
@@ -167,7 +167,7 @@ void Graphics::render()
         Vector screenPosition = Camera::getScreenPosition(collectible.position);
 
         // Render the collectible if the camera can see it.
-        if (Camera::isInFrame(screenPosition)) {
+        if (Camera::isInFrame(screenPosition, collectible.size.x, collectible.size.y)) {
             collectible.render(screenPosition);
         }
     }

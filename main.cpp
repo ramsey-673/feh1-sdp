@@ -30,7 +30,15 @@ int main()
         }
     }
 
-    while(true) Game::update();
+    Game::initialize();
+
+    Game::running = true;
+    while(Game::running)
+    {
+        Game::update();
+    } 
+
+    Game::cleanup();
 
     return 0;
 }

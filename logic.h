@@ -7,6 +7,13 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
+
+#define OUTER_CIRCLE_RADIUS 50
+#define INNER_CIRCLE_RADIUS 10
+
+#define OUTER_CIRCLE_COLOR WHITE
+#define INNER_CIRCLE_COLOR WHITE
 
 
 
@@ -389,11 +396,145 @@ bool Physics::checkCollision(Tile &tile)
 bool Physics::checkCollision(Collectible &collectible) { }
 
 
+// Handes user input
+class InputHandler {
+private:
+    /**
+     * True if the player touched the screen on the last frame.
+     * False if the player did not touch the screen on the last frame.
+     */
+    static bool previousState;
+    /**
+     * The screen position where the player initially put their finger down.
+     * Undefined position is (-1, -1).
+     */
+    static Vector touchOrigin;
+public:
+    /**
+     * Updates the game's state based on user's input on the current frame.
+     */
+    static void processInput();
+};
+
+bool InputHandler::previousState = false;
+Vector InputHandler::touchOrigin = {-1, -1};
+
+void InputHandler::processInput()
+{
+    // The finger's position on this frame.
+    // Undefined position is (-1, -1).
+    Vector touch = {-1, -1};
+
+    // Check if the player is touching the screen on this frame.
+    // If they are, update the values inside x and y.
+    // Casts float input into integer position.
+    bool currentState = LCD.Touch(&touch.x, &touch.y);
+
+    if (currentState)
+    {
+        if (InputHandler::previousState)
+        {
+            // The user is holding theif finger down
+            // on this frame.
+        }
+        else
+        {
+            // The user put their finger down
+            // on this frame.
+
+            // Update the origin of the outer circle.
+            InputHandler::touchOrigin = {touch.x, touch.y};
+        }
+
+        /* Calculate input offset from touch origin. */
+
+        Vector touchOriginOffset = {touch.x - InputHandler::touchOrigin.x,
+            touch.y - InputHandler::touchOrigin.y};
+
+        // Check if the player's x input exceeds the outer circle.
+        if (std::fabs(touchOriginOffset.x) > OUTER_CIRCLE_RADIUS)
+        {
+            // Cap offsetX to the outer circle radius.
+            // OffsetX will never be zero if it reached here.
+            if (touchOriginOffset.x > 0) {
+                // Positive offset
+                touchOriginOffset.x = OUTER_CIRCLE_RADIUS;
+            }
+            else
+            {
+                // Negative offset
+                touchOriginOffset.x = -OUTER_CIRCLE_RADIUS;
+            }
+        }
+
+        // Check if the player's y input exceeds the outer circle.
+        if (std::fabs(touchOriginOffset.y) > OUTER_CIRCLE_RADIUS)
+        {
+            // Cap offsetX to the outer circle radius.
+            // OffsetX will never be zero if it reached here.
+            if (touchOriginOffset.y > 0) {
+                // Positive offset
+                touchOriginOffset.y = OUTER_CIRCLE_RADIUS;
+            }
+            else
+            {
+                // Negative offset
+                touchOriginOffset.y = -OUTER_CIRCLE_RADIUS;
+            }
+        }
+
+        /* Draw input UI */
+
+        // Draw the outer circle.
+        LCD.SetFontColor(OUTER_CIRCLE_COLOR);
+        LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
+
+        // Calculate the position of the inner circle,
+        // which is at the player's touch location if its within the outer circle
+        // or at the circumference of the outer circle if the player's touch exceeds it.
+        Vector innerCircleOrigin = {InputHandler::touchOrigin.x + touchOriginOffset.x,
+            InputHandler::touchOrigin.y + touchOriginOffset.y};
+
+        // Draw the inner circle.
+        LCD.SetFontColor(INNER_CIRCLE_COLOR);
+        LCD.DrawCircle(innerCircleOrigin.x, innerCircleOrigin.y, INNER_CIRCLE_RADIUS);
+
+        // Calculate player's x movement as a real scalar from [-1, 1].
+        float playerMovementX = (float)touchOriginOffset.x / OUTER_CIRCLE_RADIUS;
+
+        // Update player's horizontal velocity based on input.
+        Player::v.x = (playerMovementX * 5);
+    }
+    else
+    {
+        if (InputHandler::previousState)
+        {
+            // The user released their finger
+            // on this frame.
+
+            // Update touchOrigin to undefined values.
+            InputHandler::touchOrigin = {-1, -1};
+
+            // Make the player jump.
+            Player::v.y = -3;
+        }
+        else
+        {
+            // The user is not touching the screen
+            // on this frame.
+        }
+    }
+
+    // Update the previous touch state to the current touch state.
+    InputHandler::previousState = currentState;
+}
 
 /* Logic */
 
 void Logic::updateLogic()
 {
+    Physics::applyGravity();
+    InputHandler::processInput();
 	Player::position += Player::v;
 }
 
@@ -436,9 +577,9 @@ void Game::update()
 {
     // TEMPORARY GRAPHICS/PHYSICS CODE
 
-	LCD.Clear();
-
-    Physics::applyGravity();
+	
+    LCD.Clear();
+    
     Logic::updateLogic();
 
     // Testing to see how much the player can hang over the edge before it falls.
@@ -455,6 +596,7 @@ void Game::update()
 
     Player::render({ 0, 0 });
 
+    
     LCD.Update();
 }
 
