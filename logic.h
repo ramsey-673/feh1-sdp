@@ -8,12 +8,17 @@
 #include <unordered_map>
 #include <vector>
 #include <cmath>
+#include <fstream>
+
 
 #define OUTER_CIRCLE_RADIUS 50
 #define INNER_CIRCLE_RADIUS 10
 
 #define OUTER_CIRCLE_COLOR WHITE
 #define INNER_CIRCLE_COLOR WHITE
+
+#define GRID_CELL_WIDTH 16
+#define GRID_CELL_HEIGHT 16
 
 
 
@@ -89,18 +94,31 @@ public:
 // An item that the player can pick up.
 class Collectible: public Sprite
 {
+private:
+    FEHImage *texture;
 public:
     // Collectible's absolute position in the level
 	Vector position;
     // Size of collectible's hitbox
 	Vector size;
 
-	Collectible(Vector position, Vector size);
+    // Type of the collectible.
+    // 'd' represents a dollar,
+    // and 's' represents a scooter.
+    char type;
+
+	Collectible(Vector position, Vector size, char type);
+
+    void render(Vector screenPosition) const;
+
+
 };
 
 // Building blocks of the level.
 class Tile: public Sprite
 {
+private:
+    FEHImage *texture;
 public:
     // Absolute position in the level
 	Vector position;
@@ -125,7 +143,13 @@ public:
 	std::vector<Collectible> collectibles;
 
     // Maps characters from input files to the corresponding game object to create.
-	std::unordered_map<char, std::string> tileFileMap;
+	std::unordered_map<char, const char*> tileFileMap;
+
+    /**
+     * A hashmap that maps texture filenames
+     * to the texture's memory location - an FEHImage.
+     */
+    static std::unordered_map<const char*, FEHImage> fileTextureMap;
 
     /*
      * Loads a level from a text file.
@@ -300,17 +324,19 @@ Vector Player::v { 0, 0 };
 void Player::render(Vector screenPosition)
 {
     // Just draw a blue rectangle
-	LCD.SetFontColor(BLUE);
-	LCD.FillRectangle(position.x, position.y, size.x, size.y);
+	Player::texture->Draw(screenPosition.x, screenPosition.y);
 }
 
 
 
 /* Collectible */
 
-Collectible::Collectible(Vector position, Vector size): position(position), size(size) { }
+Collectible::Collectible(Vector position, Vector size, char type): position(position), size(size), type(type) { }
 
-
+void Collectible::render(Vector screenPosition) const
+{
+    this->texture->Draw(screenPosition.x, screenPosition.y);
+}
 
 /* Tile */
 
@@ -320,17 +346,122 @@ Tile::Tile(Vector position, Vector size): position(position), size(size) { }
 void Tile::render(Vector screenPosition) const
 {
     // Draw a white rectangle
-	LCD.SetFontColor(WHITE);
-	LCD.FillRectangle(position.x, position.y, size.x, size.y);
+	this->texture->Draw(screenPosition.x, screenPosition.y);
 }
 
 
 
 /* Level */
 
-Level::Level() { }
+Level::Level() {
 
-Level::Level(const std::string &fileName) { }
+}
+
+Level::Level(const std::string &fileName) {
+    // Open the current level's file.
+    std::ifstream fileStream;
+    fileStream.open(fileName);
+
+    // Check if the file opened successfully.
+    if (!fileStream.is_open()) {
+        throw 404;
+    }
+    else
+    {
+        // Start the current row and column at zero.
+        int row = 0, col = 0;
+
+        while(!fileStream.eof())
+        {
+            char objectChar = fileStream.get();
+            while (objectChar != '\n')
+            {
+                // A space means we render nothing in this tile.
+                if (objectChar == ' ')
+                {
+                    objectChar = fileStream.get();
+                    col++;
+                    continue;
+                }
+
+                // Create a vector that represents the position
+                // of the newly created object.
+                Vector gridPosition;
+
+                gridPosition.x = col * GRID_CELL_WIDTH;
+                gridPosition.y = row * GRID_CELL_HEIGHT;
+
+                // Get the object type and texture path from
+                // the char -> filePath HashMap.
+                const char *fileName = Level::tileFileMap.at(objectChar);
+
+                // Extract the object type from the fileName string literal.
+                char type = fileName[0];
+                fileName++;
+
+                // Check if the texture is not already loaded into memory.
+                if (Level::fileTextureMap.find(fileName) != Level::fileTextureMap.end())
+                {
+                    // Lead the texture into memory,
+                    FEHImage newTexture;
+                    newTexture.Open(fileName);
+                    // and insert it in the fileName -> texture HashMap.
+                    fileTextureMap.insert({fileName, newTexture});
+                }
+
+                // Initialize a pointer to the FEHImage in the
+                // pair with the file name as a key.
+                FEHImage *texture = &Level::fileTextureMap.find(fileName)->second;
+
+                // Initialize object depending on object type.
+                if (type == 'p')
+                {
+                    // Initialize the player.
+                    Player::position.x = gridPosition.x;
+                    Player::position.y = gridPosition.y;
+                    Player::texture = texture;
+                }
+                else if (type == 't')
+                {
+                    // Create a new tile.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT;
+                    Tile newTile(gridPosition, size);
+                    this->tiles.push_back(newTile);
+                }
+                else if (type == 'c')
+                {
+                    // Create a new dollar.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT;
+                    Collectible newCollectible(gridPosition, size, 'd');
+                    this->collectibles.push_back(newCollectible);
+                }
+                else if (type == 'n')
+                {
+                    // Create a new scooter.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT;
+                    Collectible newCollectible(gridPosition, size, 's');
+                    this->collectibles.push_back(newCollectible);
+                }
+
+                // Get the next character.
+                objectChar = fileStream.get();
+                // Increment column.
+                col++;
+            }
+            // Increment row.
+            row++;
+        }
+
+        // Close the file.
+        fileStream.close();
+    }
+}
 
 Level::~Level() { }
 

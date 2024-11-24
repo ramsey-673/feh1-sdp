@@ -77,12 +77,6 @@ public:
      * Iterate through every game object and render them to the screen.
      */
     static void render();
-    /**
-     * A hashmap that maps texture filenames
-     * to the texture's memory location - an FEHImage.
-     */
-    static std::unordered_map<std::string, FEHImage> fileTextureMap;
-
 };
 
 /* Implementations */
