@@ -4,6 +4,7 @@
 #include "FEHImages.h"
 #include "FEHUtility.h"
 
+#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -318,7 +319,7 @@ Vector Player::position { 50, 50 };
 
 Vector Player::size { 25, 25 };
 
-Vector Player::v { 0, 0 };
+Vector Player::v { -2, 0 };
 
 // TEMPORARY GRAPHICS CODE
 void Player::render(Vector screenPosition)
@@ -477,45 +478,49 @@ void Physics::applyGravity()
 
 bool Physics::checkCollision(Tile &tile)
 {
-    // Do the two hitboxes overlap?
-	if (Player::position.x + Player::size.x > tile.position.x &&
-        Player::position.x < tile.position.x + tile.size.x &&
-        Player::position.y + Player::size.y > tile.position.y &&
-        Player::position.y < tile.position.y + tile.size.y)
+    // Check if the player will hit the tile on the next frame.
+    if (Player::position.x + Player::size.x + Player::v.x > tile.position.x &&
+        Player::position.x + Player::v.x < tile.position.x + tile.size.x &&
+        Player::position.y + Player::size.y + Player::v.y > tile.position.y &&
+        Player::position.y + Player::v.y < tile.position.y + tile.size.y)
     {
-        // For horizontal collisions, the tile has a "buffer" to prevent it from overlapping
-        // with the vertical collisions. If the edge of the player is inside the buffer, a horizontal
-        // collision is detected. The function then returns to stop a vertical collision from being
-        // erroneously detected as well.
-
-        // Player hits the left side of the tile
+        // Vertical collisions
         if (Player::position.x + Player::size.x > tile.position.x &&
-            Player::position.x + Player::size.x < tile.position.x + CBUFFER)
+            Player::position.x < tile.position.x + tile.size.x)
         {
-            Player::v.x = 0;
-            Player::position.x = tile.position.x - Player::size.x;
-            return true;
-        }
-        // Player hits the right side of the tile
-        if (Player::position.x < tile.position.x + tile.size.x &&
-            Player::position.x > tile.position.x + tile.size.x - CBUFFER)
-        {
-            Player::v.x = 0;
-            Player::position.x = tile.position.x + tile.size.x;
-            return true;
+            // Bottom of the player hits the top of the tile
+            if (Player::position.y < tile.position.y &&
+                Player::position.y + Player::size.y + std::ceil(Player::v.y) > tile.position.y)
+            {
+                Player::v.y = 0;
+                Player::position.y = tile.position.y - Player::size.y;
+            }
+            // Top of the player hits the bottom of the tile
+            else if (Player::position.y + Player::size.y > tile.position.y + tile.size.y &&
+                     Player::position.y + std::ceil(Player::v.y) < tile.position.y + tile.size.y)
+            {
+                Player::v.y = 0;
+                Player::position.y = tile.position.y + tile.size.y;
+            }
         }
 
-        // Player hits the top of the tile
-        if (Player::position.y < tile.position.y)
+        // Horizontal collisions
+        if (Player::position.y + Player::size.y > tile.position.y &&
+            Player::position.y < tile.position.y + tile.size.y)
         {
-            Player::v.y = 0;
-            Player::position.y = tile.position.y - Player::size.y;
-        }
-        // Player hits the bottom of the tile
-        if (Player::position.y > tile.position.y)
-        {
-            Player::v.y = 0;
-            Player::position.y = tile.position.y + tile.size.y;
+            // Right side of the player hits the left side of the tile
+            if (Player::position.x < tile.position.x &&
+                Player::position.x + Player::size.x + std::ceil(Player::v.x) > tile.position.x)
+            {
+                Player::v.x = 0;
+                Player::position.x = tile.position.x - Player::size.x;
+            }
+            else if (Player::position.x + Player::size.x > tile.position.x + tile.size.x &&
+                     Player::position.x + std::ceil(Player::v.x) < tile.position.x + tile.size.x)
+            {
+                Player::v.x = 0;
+                Player::position.x = tile.position.x + tile.size.x;
+            }
         }
 
         return true;
@@ -707,23 +712,24 @@ void Game::initialize() { }
 void Game::update()
 {
     // TEMPORARY GRAPHICS/PHYSICS CODE
-
-	
-    LCD.Clear();
     
     Logic::updateLogic();
 
     // Testing to see how much the player can hang over the edge before it falls.
-    Tile test1({ 72, 200 }, { 100, 25 });
-    Tile test2({ 172, 175 }, { 25, 25 });
+    Tile test1({ 25, 160 }, { 10, 50 });
+    Tile test2({ 25, 50 }, { 10, 100 });
     currentLevel.tiles.push_back(test1);
     currentLevel.tiles.push_back(test2);
 
     for (auto i = 0; i < currentLevel.tiles.size(); i++)
 	{
         Physics::checkCollision(currentLevel.tiles[i]);
-		currentLevel.tiles[i].render({ 0, 0 });
 	}
+
+    LCD.Clear();
+
+    for (auto i = 0; i < currentLevel.tiles.size(); i++)
+        currentLevel.tiles[i].render({ 0, 0 });
 
     Player::render({ 0, 0 });
 
