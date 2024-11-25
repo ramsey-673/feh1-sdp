@@ -25,6 +25,11 @@
 #define GRID_CELL_WIDTH 16
 #define GRID_CELL_HEIGHT 16
 
+#define GRAVITY_X 0
+#define GRAVITY_Y 0.5
+
+#define JUMP_STRENGTH 10
+
 
 
 // "Buffer" used to prevent overlapping collisions.
@@ -323,7 +328,7 @@ FEHImage *Player::texture;
 
 Vector Player::position { 50, 50 };
 
-Vector Player::size { 25, 25 };
+Vector Player::size { 16, 11 };
 
 Vector Player::v { -2, 0 };
 
@@ -518,6 +523,10 @@ bool Physics::checkCollision(Tile &tile)
             if (Player::position.y < tile.position.y &&
                 Player::position.y + Player::size.y + std::ceil(Player::v.y) > tile.position.y)
             {
+                if (std::fabs(Player::v.x) > 0.05)
+                    Player::v.x /= 1.5;
+                else
+                    Player::v.x = 0;
                 Player::v.y = 0;
                 Player::position.y = tile.position.y - Player::size.y;
             }
@@ -681,7 +690,7 @@ void InputHandler::processInput()
             InputHandler::smallCircle = {-1, -1};
 
             // Make the player jump.
-            Player::v.y = -3;
+            Player::v.y = -JUMP_STRENGTH;
         }
         else
         {
@@ -698,14 +707,14 @@ void InputHandler::processInput()
 
 void Logic::updateLogic()
 {
-    for (auto i = 0; i < Game::currentLevel.tiles.size(); i++)
-        Physics::checkCollision(*Game::currentLevel.tiles[i]);
     Physics::applyGravity();
     InputHandler::processInput();
+    for (auto i = 0; i < Game::currentLevel.tiles.size(); i++)
+        Physics::checkCollision(*Game::currentLevel.tiles[i]);
 	Player::position += Player::v;
 
     if (Player::position.y > 2000) {
-        fprintf("ERROR: Player is out of bounds!");
+        printf("ERROR: Player is out of bounds!");
         
         Game::running = false;
     }
@@ -930,7 +939,7 @@ Level Game::currentLevel { };
 
 Timer Game::gameTimer(5);
 
-Vector Game::gravity { 0, 0.2 };
+Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 void Game::initialize() {
     printf("INITIALIZING GAME\n");
