@@ -26,9 +26,10 @@
 #define GRID_CELL_HEIGHT 16
 
 #define GRAVITY_X 0
-#define GRAVITY_Y 0.5
+#define GRAVITY_Y 1
 
-#define JUMP_STRENGTH 7
+#define PLAYER_SPEED 7
+#define JUMP_STRENGTH 10
 #define NUMBER_JUMPS 2
 
 
@@ -692,7 +693,7 @@ void InputHandler::processInput()
         float playerMovementX = (float)touchOriginOffset.x / OUTER_CIRCLE_RADIUS;
 
         // Update player's horizontal velocity based on input.
-        Player::v.x = (playerMovementX * 5);
+        Player::v.x = (playerMovementX * PLAYER_SPEED);
     }
     else
     {
