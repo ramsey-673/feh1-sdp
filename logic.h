@@ -703,6 +703,12 @@ void Logic::updateLogic()
     Physics::applyGravity();
     InputHandler::processInput();
 	Player::position += Player::v;
+
+    if (Player::position.y > 2000) {
+        fprintf("ERROR: Player is out of bounds!");
+        
+        Game::running = false;
+    }
 }
 
 
