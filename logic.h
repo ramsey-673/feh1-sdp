@@ -28,7 +28,8 @@
 #define GRAVITY_X 0
 #define GRAVITY_Y 0.5
 
-#define JUMP_STRENGTH 10
+#define JUMP_STRENGTH 7
+#define NUMBER_JUMPS 2
 
 
 
@@ -91,6 +92,8 @@ public:
 	static Vector size;
     // The player's current velocity; change in position per frame
 	static Vector v;
+
+    static int jumpCounter;
 
     // Texture associated with the player
     static FEHImage *texture;
@@ -332,6 +335,8 @@ Vector Player::size { 16, 11 };
 
 Vector Player::v { -2, 0 };
 
+int Player::jumpCounter = 0;
+
 // TEMPORARY GRAPHICS CODE
 void Player::render(Vector screenPosition)
 {
@@ -529,6 +534,8 @@ bool Physics::checkCollision(Tile &tile)
                     Player::v.x = 0;
                 Player::v.y = 0;
                 Player::position.y = tile.position.y - Player::size.y;
+
+                Player::jumpCounter = NUMBER_JUMPS;
             }
             // Top of the player hits the bottom of the tile
             else if (Player::position.y + Player::size.y > tile.position.y + tile.size.y &&
@@ -690,7 +697,11 @@ void InputHandler::processInput()
             InputHandler::smallCircle = {-1, -1};
 
             // Make the player jump.
-            Player::v.y = -JUMP_STRENGTH;
+            if (Player::jumpCounter > 0) {
+                Player::v.y = -JUMP_STRENGTH;
+                Player::jumpCounter--;
+            }
+            
         }
         else
         {
