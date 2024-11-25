@@ -566,20 +566,24 @@ private:
      * False if the player did not touch the screen on the last frame.
      */
     static bool previousState;
-    /**
-     * The screen position where the player initially put their finger down.
-     * Undefined position is (-1, -1).
-     */
-    static Vector touchOrigin;
+    
 public:
     /**
      * Updates the game's state based on user's input on the current frame.
      */
     static void processInput();
+    /**
+     * The screen position where the player initially put their finger down.
+     * Undefined position is (-1, -1).
+     */
+    static Vector touchOrigin;
+    static Vector smallCircle;
+
 };
 
 bool InputHandler::previousState = false;
 Vector InputHandler::touchOrigin = {-1, -1};
+Vector InputHandler::smallCircle = {-1, -1};
 
 void InputHandler::processInput()
 {
@@ -647,9 +651,7 @@ void InputHandler::processInput()
 
         /* Draw input UI */
 
-        // Draw the outer circle.
-        LCD.SetFontColor(OUTER_CIRCLE_COLOR);
-        LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
+        
 
         // Calculate the position of the inner circle,
         // which is at the player's touch location if its within the outer circle
@@ -657,9 +659,9 @@ void InputHandler::processInput()
         Vector innerCircleOrigin = {InputHandler::touchOrigin.x + touchOriginOffset.x,
             InputHandler::touchOrigin.y + touchOriginOffset.y};
 
-        // Draw the inner circle.
-        LCD.SetFontColor(INNER_CIRCLE_COLOR);
-        LCD.DrawCircle(innerCircleOrigin.x, innerCircleOrigin.y, INNER_CIRCLE_RADIUS);
+        // Allow Graphics::render() to render the circles.
+        InputHandler::smallCircle.x = innerCircleOrigin.x;
+        InputHandler::smallCircle.y = innerCircleOrigin.y;
 
         // Calculate player's x movement as a real scalar from [-1, 1].
         float playerMovementX = (float)touchOriginOffset.x / OUTER_CIRCLE_RADIUS;
@@ -676,6 +678,7 @@ void InputHandler::processInput()
 
             // Update touchOrigin to undefined values.
             InputHandler::touchOrigin = {-1, -1};
+            InputHandler::smallCircle = {-1, -1};
 
             // Make the player jump.
             Player::v.y = -3;
@@ -893,6 +896,16 @@ void Graphics::render()
     // No need to check if the player is in frame
     // because they are always in frame.
     Player::render(screenPosition);
+
+    /* Draw input */
+
+    // Draw the outer circle.
+    LCD.SetFontColor(OUTER_CIRCLE_COLOR);
+    LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
+
+    // Draw the inner circle.
+    LCD.SetFontColor(INNER_CIRCLE_COLOR);
+    LCD.DrawCircle(InputHandler::smallCircle.x, InputHandler::smallCircle.y, INNER_CIRCLE_RADIUS);
 }
 
 /* Game */
@@ -919,6 +932,8 @@ void Game::initialize() {
     Level newLevel("levels/testLevel.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
+
+    LCD.SetBackgroundColor(WHITE);
 }
 
 void Game::update()
@@ -926,11 +941,13 @@ void Game::update()
     // TEMPORARY GRAPHICS/PHYSICS CODE
     //printf("LOADING FRAME\n");
 
-    LCD.Clear();
+    
 
     //printf("COMPUTING LOGIC\n");
     Logic::updateLogic();
     //printf("COMPUTED LOGIC\n");
+    
+    LCD.Clear();
 
     //printf("RENDERING GRAPHICS\n");
     Graphics::render();
