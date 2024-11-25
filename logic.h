@@ -705,8 +705,8 @@ void Logic::updateLogic()
 	Player::position += Player::v;
 
     if (Player::position.y > 2000) {
-        fprintf("ERROR: Player is out of bounds!");
-        
+        printf("ERROR: Player is out of bounds!\n");
+
         Game::running = false;
     }
 }
