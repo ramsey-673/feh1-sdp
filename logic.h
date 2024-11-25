@@ -826,6 +826,8 @@ public:
      * Iterate through every game object and render them to the screen.
      */
     static void render();
+
+    static FEHImage *background;
 };
 
 /* Implementations */
@@ -885,12 +887,16 @@ void Camera::follow(const Vector &targetPosition)
     Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
 }
 
+FEHImage *Graphics::background;
+
 void Graphics::render()
 {
     // Ensure the camera stays centered on the player
     // during this rendering cycle.
     // printf("MOVING TO PLAYER\n");
     Camera::follow(Player::position);
+
+    Graphics::background->Draw(0, 0);
 
 
     // printf("RENDERING TILES\n");
@@ -968,6 +974,9 @@ void Game::initialize() {
     Player::texture = playerNormal;
     Player::flipTexture = playerFlipped;
 
+    FEHImage *background = new FEHImage("ohio_union_background.png");
+    Graphics::background = background;
+
     printf("INITIALIZING GAME\n");
     Level::tileFileMap.insert({'p', "pfood_robot.png"});
     Level::tileFileMap.insert({'t', "tdirt.png"});
@@ -980,7 +989,7 @@ void Game::initialize() {
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
-    LCD.SetBackgroundColor(BLUE);
+    LCD.SetBackgroundColor(0x89e0f0);
 }
 
 void Game::update()
