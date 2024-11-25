@@ -16,7 +16,7 @@
 #include <fstream>
 
 
-#define OUTER_CIRCLE_RADIUS 50
+#define OUTER_CIRCLE_RADIUS 35
 #define INNER_CIRCLE_RADIUS 10
 
 #define OUTER_CIRCLE_COLOR WHITE
@@ -899,13 +899,19 @@ void Graphics::render()
 
     /* Draw input */
 
-    // Draw the outer circle.
-    LCD.SetFontColor(OUTER_CIRCLE_COLOR);
-    LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
+    if (InputHandler::touchOrigin.x != -1)
+    {
+        // Draw the outer circle.
 
-    // Draw the inner circle.
-    LCD.SetFontColor(INNER_CIRCLE_COLOR);
-    LCD.DrawCircle(InputHandler::smallCircle.x, InputHandler::smallCircle.y, INNER_CIRCLE_RADIUS);
+        LCD.SetFontColor(OUTER_CIRCLE_COLOR);
+        LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
+
+        // Draw the inner circle.
+        LCD.SetFontColor(INNER_CIRCLE_COLOR);
+        LCD.DrawCircle(InputHandler::smallCircle.x, InputHandler::smallCircle.y, INNER_CIRCLE_RADIUS);
+    }
+
+    
 }
 
 /* Game */
@@ -933,7 +939,7 @@ void Game::initialize() {
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
-    LCD.SetBackgroundColor(WHITE);
+    LCD.SetBackgroundColor(BLUE);
 }
 
 void Game::update()
