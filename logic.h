@@ -97,6 +97,7 @@ public:
 
     // Texture associated with the player
     static FEHImage *texture;
+    static FEHImage *flipTexture;
 
     /*
      * TEMPORARY GRAPHICS CODE
@@ -328,6 +329,7 @@ void Sprite::render(Vector screenPosition) const { }
 /* Player */
 
 FEHImage *Player::texture;
+FEHImage *Player::flipTexture;
 
 Vector Player::position { 50, 50 };
 
@@ -341,7 +343,14 @@ int Player::jumpCounter = 0;
 void Player::render(Vector screenPosition)
 {
     // Just draw a blue rectangle
-	Player::texture->Draw(screenPosition.x, screenPosition.y);
+    if (Player::v.x <= 0)
+    {
+        Player::texture->Draw(screenPosition.x, screenPosition.y);
+    } else
+    {
+        Player::flipTexture->Draw(screenPosition.x, screenPosition.y);
+    }
+	
 }
 
 
@@ -454,7 +463,7 @@ Level::Level(const std::string &fileName) {
                     // Initialize the player.
                     Player::position.x = gridPosition.x;
                     Player::position.y = gridPosition.y;
-                    Player::texture = texture;
+                    //Player::texture = texture;
                 }
                 else if (type == 't')
                 {
@@ -953,6 +962,12 @@ Timer Game::gameTimer(5);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 void Game::initialize() {
+    FEHImage *playerNormal = new FEHImage("food_robot.png");
+    FEHImage *playerFlipped = new FEHImage("food_robot_right.png");
+
+    Player::texture = playerNormal;
+    Player::flipTexture = playerFlipped;
+
     printf("INITIALIZING GAME\n");
     Level::tileFileMap.insert({'p', "pfood_robot.png"});
     Level::tileFileMap.insert({'t', "tdirt.png"});
