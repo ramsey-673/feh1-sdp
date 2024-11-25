@@ -4,6 +4,10 @@
 #include "FEHImages.h"
 #include "FEHUtility.h"
 
+#define PROTEUS_WIDTH 319
+#define PROTEUS_HEIGHT 239
+#define DEFAULT_SPRITE_SIZE 16
+
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -108,7 +112,7 @@ public:
     // and 's' represents a scooter.
     char type;
 
-	Collectible(Vector position, Vector size, char type);
+	Collectible(Vector position, Vector size, FEHImage *texture, char type);
 
     void render(Vector screenPosition) const;
 
@@ -126,7 +130,7 @@ public:
     // Hitbox size
 	Vector size;
 	
-	Tile(Vector position, Vector size);
+	Tile(Vector position, Vector size, FEHImage *texture);
 
     /*
      * TEMPORARY GRAPHICS CODE
@@ -139,18 +143,18 @@ class Level
 {
 public:
     // Contains every tile in the current level.
-	std::vector<Tile> tiles;
+	std::vector<Tile*> tiles;
     // Contains every collectible in the current level.
-	std::vector<Collectible> collectibles;
+	std::vector<Collectible*> collectibles;
 
     // Maps characters from input files to the corresponding game object to create.
-	std::unordered_map<char, const char*> tileFileMap;
+	static std::unordered_map<char, const char*> tileFileMap;
 
     /**
      * A hashmap that maps texture filenames
      * to the texture's memory location - an FEHImage.
      */
-    static std::unordered_map<const char*, FEHImage> fileTextureMap;
+    static std::unordered_map<const char*, FEHImage*> fileTextureMap;
 
     /*
      * Loads a level from a text file.
@@ -315,6 +319,8 @@ void Sprite::render(Vector screenPosition) const { }
 
 /* Player */
 
+FEHImage *Player::texture;
+
 Vector Player::position { 50, 50 };
 
 Vector Player::size { 25, 25 };
@@ -332,7 +338,7 @@ void Player::render(Vector screenPosition)
 
 /* Collectible */
 
-Collectible::Collectible(Vector position, Vector size, char type): position(position), size(size), type(type) { }
+Collectible::Collectible(Vector position, Vector size, FEHImage *texture, char type): position(position), size(size), texture(texture), type(type) { }
 
 void Collectible::render(Vector screenPosition) const
 {
@@ -341,18 +347,27 @@ void Collectible::render(Vector screenPosition) const
 
 /* Tile */
 
-Tile::Tile(Vector position, Vector size): position(position), size(size) { }
+Tile::Tile(Vector position, Vector size, FEHImage *texture): position(position), size(size), texture(texture) { }
 
 // TEMPORARY GRAPHICS CODE
 void Tile::render(Vector screenPosition) const
 {
+
+    // if (this->texture == NULL) {
+    //     printf("This is null\n");
+    // }
     // Draw a white rectangle
+    // printf("DRAWING tile at (%f, %f)\n", screenPosition.x, screenPosition.y);
 	this->texture->Draw(screenPosition.x, screenPosition.y);
+    // printf("Finished drawing tile\n");
 }
 
 
 
 /* Level */
+
+std::unordered_map<const char*, FEHImage*> Level::fileTextureMap;
+std::unordered_map<char, const char*> Level::tileFileMap;
 
 Level::Level() {
 
@@ -372,9 +387,11 @@ Level::Level(const std::string &fileName) {
         // Start the current row and column at zero.
         int row = 0, col = 0;
 
+
+        char objectChar = fileStream.get();
         while(!fileStream.eof())
         {
-            char objectChar = fileStream.get();
+            
             while (objectChar != '\n')
             {
                 // A space means we render nothing in this tile.
@@ -392,6 +409,8 @@ Level::Level(const std::string &fileName) {
                 gridPosition.x = col * GRID_CELL_WIDTH;
                 gridPosition.y = row * GRID_CELL_HEIGHT;
 
+                printf("LOADING %c to (%f, %f)\n", objectChar, gridPosition.x, gridPosition.y);
+
                 // Get the object type and texture path from
                 // the char -> filePath HashMap.
                 const char *fileName = Level::tileFileMap.at(objectChar);
@@ -400,19 +419,24 @@ Level::Level(const std::string &fileName) {
                 char type = fileName[0];
                 fileName++;
 
+                
+                // printf("CHECKING IF MAP CONTAINS TEXTURE, %s\n", fileName);
+
+                
                 // Check if the texture is not already loaded into memory.
-                if (Level::fileTextureMap.find(fileName) != Level::fileTextureMap.end())
+                if (Level::fileTextureMap.find(fileName) == Level::fileTextureMap.end())
                 {
+                    // printf("ADDING TEXTURE TO FILE TEXTURE MAP\n");
                     // Lead the texture into memory,
-                    FEHImage newTexture;
-                    newTexture.Open(fileName);
+                    FEHImage *newTexture = new FEHImage();
+                    newTexture->Open(fileName);
                     // and insert it in the fileName -> texture HashMap.
                     fileTextureMap.insert({fileName, newTexture});
                 }
 
                 // Initialize a pointer to the FEHImage in the
                 // pair with the file name as a key.
-                FEHImage *texture = &Level::fileTextureMap.find(fileName)->second;
+                FEHImage *texture = Level::fileTextureMap.find(fileName)->second;
 
                 // Initialize object depending on object type.
                 if (type == 'p')
@@ -428,7 +452,7 @@ Level::Level(const std::string &fileName) {
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
-                    Tile newTile(gridPosition, size);
+                    Tile *newTile = new Tile(gridPosition, size, texture);
                     this->tiles.push_back(newTile);
                 }
                 else if (type == 'c')
@@ -437,7 +461,7 @@ Level::Level(const std::string &fileName) {
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
-                    Collectible newCollectible(gridPosition, size, 'd');
+                    Collectible *newCollectible = new Collectible(gridPosition, size, texture, 'd');
                     this->collectibles.push_back(newCollectible);
                 }
                 else if (type == 'n')
@@ -446,7 +470,7 @@ Level::Level(const std::string &fileName) {
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
-                    Collectible newCollectible(gridPosition, size, 's');
+                    Collectible *newCollectible = new Collectible(gridPosition, size, texture, 's');
                     this->collectibles.push_back(newCollectible);
                 }
 
@@ -456,7 +480,9 @@ Level::Level(const std::string &fileName) {
                 col++;
             }
             // Increment row.
+            col = 0;
             row++;
+            objectChar = fileStream.get();
         }
 
         // Close the file.
@@ -669,6 +695,8 @@ void InputHandler::processInput()
 
 void Logic::updateLogic()
 {
+    for (auto i = 0; i < Game::currentLevel.tiles.size(); i++)
+        Physics::checkCollision(*Game::currentLevel.tiles[i]);
     Physics::applyGravity();
     InputHandler::processInput();
 	Player::position += Player::v;
@@ -693,7 +721,179 @@ double Timer::getTimeLeft() const
     return this->stopTime - TimeNow();
 }
 
+/**
+ * Handles the relationship between game position and screen position.
+ * Essentially functions as the game's "camera."
+ */
+class Camera
+{
+private:
+    /**
+     * The upper-left corner (origin) of the game's camera.
+     */
+    static Vector origin;
+public:
 
+    /**
+     * Returns the screen position of parameter &spritePosition
+     * based on the camera.
+     * 
+     * @param &gamePosition
+     *      game position to convert to screen position
+     * @returns screen position of parameter based on camera
+     */
+    static Vector getScreenPosition(const Vector &gamePosition);
+
+    /**
+     * Returns true if the sprite is visible from the camera
+     * and false if it not.
+     * 
+     * @param &screenPosition
+     *      the screen position to check
+     * @param spriteWidth
+     *      the width of the game object's sprite
+     * @param spriteHeight
+     *      the height of the game object's sprite
+     * @returns whether the sprite object is on the screen
+     */
+    static bool isInFrame(const Vector &screenPosition, const int spriteWidth, const int spriteHeight);
+    static bool isInFrame(const Vector &screenPosition);
+
+   /**
+    * Changes the location of the camera's origin
+    * to ensure that the game object is in the center of the camera.
+    * 
+    * @param &targetPosition
+    *       the game position of the game object to follow
+    * @param spriteWidth
+    *       the width of the game object to follow's sprite
+    * @param spriteHeight
+    *       the height of the game object to follow's sprite
+    */
+    static void follow(const Vector &targetPosition, const int spriteWidth, const int spriteHeight);
+    static void follow(const Vector &targetPosition);
+    
+};
+
+/**
+ * Responsible for the game's graphics.
+ * Does not handle UI graphics.
+ */
+class Graphics
+{
+private:
+    // Maps a filename to a texture object.
+public:
+    /**
+     * Iterate through every game object and render them to the screen.
+     */
+    static void render();
+};
+
+/* Implementations */
+
+Vector Camera::origin = {0, 0};
+
+Vector Camera::getScreenPosition(const Vector &gamePosition)
+{
+    // Initialize return struct on the stack.
+    Vector screenPosition;
+
+    // Offset the game position by the camera's origin.
+    screenPosition.x = gamePosition.x - Camera::origin.x;
+    screenPosition.y = gamePosition.y - Camera::origin.y;
+
+    // Return a copy of the resulting screen position.
+    return screenPosition;
+}
+
+bool Camera::isInFrame(const Vector &screenPosition, const int spriteWidth, const int spriteHeight)
+{
+    // Check if the game object is within the camera's bounds.
+    if (screenPosition.x + spriteWidth < 0 ||  // Is the sprite to the left of the camera?
+        screenPosition.x > PROTEUS_WIDTH ||    // Is the sprite to the right of the camera?
+        screenPosition.y + spriteHeight < 0 || // Is the sprite above the camera?
+        screenPosition.y > PROTEUS_HEIGHT)     // Is the sprite below the camera?
+    {
+        // The game object is outside one of the camera's bounds.
+        return false;
+    }
+    else
+    {
+        // The game object is within all of the camera's bounds.
+        return true;
+    }
+}
+bool Camera::isInFrame(const Vector &screenPosition)
+{
+    // Return result of overloaded method with default values.
+    return Camera::isInFrame(screenPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+void Camera::follow(const Vector &targetPosition, const int spriteWidth, const int spriteHeight)
+{
+    // Set the camera's origin one half-screen above and to the left of the sprite's origin.
+    Camera::origin.x = targetPosition.x - PROTEUS_WIDTH / 2;
+    Camera::origin.y = targetPosition.y - PROTEUS_HEIGHT / 2;
+
+    // Offset the camera's position by the sprite's size,
+    // so the center of the camera is at the center of the sprite.
+    Camera::origin.x += spriteWidth / 2;
+    Camera::origin.y += spriteHeight / 2;
+}
+void Camera::follow(const Vector &targetPosition)
+{
+    // Return result of overloaded method with default values.
+    Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
+}
+
+void Graphics::render()
+{
+    // Ensure the camera stays centered on the player
+    // during this rendering cycle.
+    // printf("MOVING TO PLAYER\n");
+    Camera::follow(Player::position);
+
+
+    // printf("RENDERING TILES\n");
+    // Iterate through every tile in the level.
+    for (const Tile *tile : Game::currentLevel.tiles)
+    {
+        // printf("GETTING SCREEN POSITION FOR TILE\n");
+        // Find the screen position of the current tile.
+        Vector screenPosition = Camera::getScreenPosition(tile->position);
+
+        // printf("CHECKING IF TILE IS IN FRAME\n");
+        // Render the tile if the camera can see it.
+        if (Camera::isInFrame(screenPosition, tile->size.x, tile->size.y)) {
+            // printf("RENDERING TILE\n");
+            tile->render(screenPosition);
+            // printf("RENDERED TILE\n");
+        }
+    }
+
+    // printf("RENDERING COLLECTIBLES\n");
+    // Iterate through every collectible in the level.
+    for (const Collectible *collectible : Game::currentLevel.collectibles)
+    {
+        // Find the screen position of the current collectible.
+        Vector screenPosition = Camera::getScreenPosition(collectible->position);
+
+        // Render the collectible if the camera can see it.
+        if (Camera::isInFrame(screenPosition, collectible->size.x, collectible->size.y)) {
+            collectible->render(screenPosition);
+        }
+    }
+
+    // printf("RENDERING PLAYER\n");
+    // Find the screen position of the player.
+    Vector screenPosition = Camera::getScreenPosition(Player::position);
+
+    // Render the player to the screen.
+    // No need to check if the player is in frame
+    // because they are always in frame.
+    Player::render(screenPosition);
+}
 
 /* Game */
 
@@ -707,33 +907,35 @@ Timer Game::gameTimer(5);
 
 Vector Game::gravity { 0, 0.2 };
 
-void Game::initialize() { }
+void Game::initialize() {
+    printf("INITIALIZING GAME\n");
+    Level::tileFileMap.insert({'p', "pfood_robot.png"});
+    Level::tileFileMap.insert({'t', "tdirt.png"});
+    Level::tileFileMap.insert({'c', "cdollar.png"});
+    Level::tileFileMap.insert({'n', "nscooter.png"});
+    printf("LOADED TILEFILEMAP\n");
+
+    printf("LOADING LEVEL\n");
+    Level newLevel("levels/testLevel.txt");
+    printf("LOADED LEVEL\n");
+    Game::currentLevel = newLevel;
+}
 
 void Game::update()
 {
     // TEMPORARY GRAPHICS/PHYSICS CODE
-    
-    Logic::updateLogic();
-
-    // Testing to see how much the player can hang over the edge before it falls.
-    Tile test1({ 25, 160 }, { 10, 50 });
-    Tile test2({ 25, 50 }, { 10, 100 });
-    currentLevel.tiles.push_back(test1);
-    currentLevel.tiles.push_back(test2);
-
-    for (auto i = 0; i < currentLevel.tiles.size(); i++)
-	{
-        Physics::checkCollision(currentLevel.tiles[i]);
-	}
+    //printf("LOADING FRAME\n");
 
     LCD.Clear();
 
-    for (auto i = 0; i < currentLevel.tiles.size(); i++)
-        currentLevel.tiles[i].render({ 0, 0 });
+    //printf("COMPUTING LOGIC\n");
+    Logic::updateLogic();
+    //printf("COMPUTED LOGIC\n");
 
-    Player::render({ 0, 0 });
+    //printf("RENDERING GRAPHICS\n");
+    Graphics::render();
 
-    
+
     LCD.Update();
 }
 
