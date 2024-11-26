@@ -96,6 +96,9 @@ void Graphics::render()
     // Iterate through every collectible in the level.
     for (const Collectible *collectible : Game::currentLevel.collectibles)
     {
+        // Don't render a collectible that has already been picked up.
+        if (collectible->collected) continue;
+        
         // Find the screen position of the current collectible.
         Vector screenPosition = Camera::getScreenPosition(collectible->position);
 

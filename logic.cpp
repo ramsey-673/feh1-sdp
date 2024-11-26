@@ -35,7 +35,7 @@ void Player::render(Vector screenPosition)
 
 /* Collectible */
 
-Collectible::Collectible(Vector position, Vector size, FEHImage *texture, char type): position(position), size(size), texture(texture), type(type) { }
+Collectible::Collectible(Vector position, Vector size, FEHImage *texture, char type): position(position), size(size), texture(texture), type(type), collected(false) { }
 
 void Collectible::render(Vector screenPosition) const
 {
@@ -251,7 +251,19 @@ bool Physics::checkCollision(Tile &tile)
     return false;
 }
 
-bool Physics::checkCollision(Collectible &collectible) { }
+bool Physics::checkCollision(Collectible &collectible)
+{ 
+    // Determine if the player's hitbox overlaps with that of the collectible.
+    if (Player::position.x + Player::size.x > collectible.position.x &&
+        Player::position.x < collectible.position.x + collectible.size.x &&
+        Player::position.y + Player::size.y > collectible.position.y &&
+        Player::position.y < collectible.position.y + collectible.size.y &&
+        !collectible.collected && collectible.type != 's')
+    {
+        Game::score++;
+        collectible.collected = true;
+    }
+}
 
 void Logic::updateLogic()
 {
@@ -259,6 +271,8 @@ void Logic::updateLogic()
     InputHandler::processInput();
     for (auto i = 0; i < Game::currentLevel.tiles.size(); i++)
         Physics::checkCollision(*Game::currentLevel.tiles[i]);
+    for (auto i = 0; i < Game::currentLevel.collectibles.size(); i++)
+        Physics::checkCollision(*Game::currentLevel.collectibles[i]);
 	Player::position += Player::v;
 
     if (Player::position.y > 2000) {

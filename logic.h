@@ -59,6 +59,8 @@ public:
 	Vector position;
     // Size of collectible's hitbox
 	Vector size;
+    // Whether or not the collectible has been picked up.
+    bool collected;
 
     // Type of the collectible.
     // 'd' represents a dollar,
@@ -68,8 +70,6 @@ public:
 	Collectible(Vector position, Vector size, FEHImage *texture, char type);
 
     void render(Vector screenPosition) const;
-
-
 };
 
 // Building blocks of the level.
@@ -182,12 +182,3 @@ public:
     // Value of gravity in the level
 	static Vector gravity;
 };
-
-
-
-/**************************************************************************************************************/
-
-
-
-/* Vector */
-
