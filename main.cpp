@@ -1,3 +1,18 @@
+/**
+ * TODO:
+ * 1. Fix project structure.
+ *  a. Move everything to its own .cpp file
+ * 2. Create level traversal/dollars
+ *  a. Create transition screens with level names (optional)
+ * 3. Create levels
+ *  a. Create end screen
+ * 4. Create exit to main menu
+ *  a. Pause menu (optional and very hard)
+ * 5. Save data (easy)
+ * 6. Create rendering pipeline
+ * 7. Make project non-static
+ */
+
 #include "logic.h"
 #include "ui.h"
 
