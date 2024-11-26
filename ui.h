@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FEHLCD.h"
+#include "utils.h"
 
 #include <cmath>
 #include <string>
@@ -18,10 +19,6 @@
 
 #define SCORE_COLOR WHITE
 #define TIMER_COLOR WHITE
-
-
-
-class Vector;
 
 // Menu functions
 int menu();
@@ -76,30 +73,4 @@ public:
     static Vector touchOrigin;
     static Vector smallCircle;
 
-};
-
-
-// Timer that the player has to beat
-class Timer
-{
-private:
-    /**
-     * The relative stop time of the timer.
-     */
-    double stopTime;
-public:
-    Timer(double duration);
-    /**
-     * Check if the timer is ongoing.
-     * 
-     * @returns true if the timer is ongoing
-     * and false if it expired.
-     */
-    bool isTimeUp() const;
-    /**
-     * Calculates the time in seconds until the timer expires.
-     * 
-     * @returns time in seconds until timer expires
-     */
-    double getTimeLeft() const; // Get remaining time
 };

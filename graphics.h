@@ -1,6 +1,6 @@
 #pragma once
 
-class Vector;
+#include "utils.h"
 #include "FEHImages.h"
 
 

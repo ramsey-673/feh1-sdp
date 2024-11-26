@@ -3,6 +3,7 @@
 #include "FEHLCD.h"
 #include "FEHImages.h"
 #include "FEHUtility.h"
+#include "utils.h"
 
 #define PROTEUS_WIDTH 319
 #define PROTEUS_HEIGHT 239
@@ -24,40 +25,6 @@
 #define PLAYER_SPEED 7
 #define JUMP_STRENGTH 10
 #define NUMBER_JUMPS 2
-
-
-
-// "Buffer" used to prevent overlapping collisions.
-// This should always be GREATER than the player's maximum horizontal velocity.
-// Otherwise, the player may bypass it and phase through a wall.
-#define CBUFFER 3
-
-class Timer;
-
-// Simple (x, y) pair with overloaded math operators
-class Vector
-{
-public:
-    // Pair of coordinates or measurements
-    float x;
-    float y;
-
-    /*
-     * Operators for mathematically manipulating vectors.
-     */
-    Vector operator+(const Vector& a);
-    Vector operator-(const Vector& a);
-    Vector operator*(const int a);
-    Vector operator/(const int a);
-
-    /*
-     * Assignment operators for vectors.
-     */
-    void operator+=(const Vector& a);
-    void operator-=(const Vector& a);
-    void operator*=(const int a);
-    void operator/=(const int a);
-};
 
 // The player
 class Player

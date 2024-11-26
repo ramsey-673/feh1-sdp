@@ -1,21 +1,6 @@
 #include "ui.h"
 #include "logic.h"
-
-
-Timer::Timer(double duration)
-{
-    this->stopTime = TimeNow() + duration;
-}
-
-bool Timer::isTimeUp() const
-{
-    return TimeNow() > this->stopTime;
-}
-
-double Timer::getTimeLeft() const
-{
-    return this->stopTime - TimeNow();
-}
+#include "Utils.h"
 
 bool InputHandler::previousState = false;
 Vector InputHandler::touchOrigin = {-1, -1};
