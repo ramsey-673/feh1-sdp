@@ -97,6 +97,8 @@ public:
 class Level
 {
 public:
+    // Dollars required to proceed to the next level.
+    int dollarsLeft;
     // Contains every tile in the current level.
 	std::vector<Tile*> tiles;
     // Contains every collectible in the current level.
@@ -118,9 +120,18 @@ public:
      * The default constructor creates a completely blank level.
      * If a fileName is provided, a level will be loaded from the file.
      * Each character and position in the file is mapped to a specific object to add to the level.
+     * 
+     * @author Andrew Loznianu
      */
-    Level();
 	Level(const std::string &fileName);
+    Level();
+    /**
+     * Destructor for level objects.
+     * Free tiles and collectibles from memory.
+     * Loaded textures stay in memory.
+     * 
+     * @author Andrew Loznianu
+     */
 	~Level();
 
     /**
@@ -187,10 +198,22 @@ public:
 	static void cleanup();
 
     // The level currently loaded + displayed to the player
-	static Level currentLevel;
+	static Level *currentLevel;
     // Timer that will end the game if it runs out
 	static Timer gameTimer;
 
     // Value of gravity in the level
 	static Vector gravity;
+
+    /**
+     * Proceeds to the next level.
+     * 
+     * @author Andrew Loznianu
+     */
+    static void nextLevel();
+
+    // Used to keep track of current level.
+    static int level;
+    // Keeps track of levels in order.
+    static std::vector<std::string> levels;
 };

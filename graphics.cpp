@@ -77,7 +77,7 @@ void Graphics::render()
 
     // printf("RENDERING TILES\n");
     // Iterate through every tile in the level.
-    for (const Tile *tile : Game::currentLevel.tiles)
+    for (const Tile *tile : Game::currentLevel->tiles)
     {
         // printf("GETTING SCREEN POSITION FOR TILE\n");
         // Find the screen position of the current tile.
@@ -94,7 +94,7 @@ void Graphics::render()
 
     // printf("RENDERING COLLECTIBLES\n");
     // Iterate through every collectible in the level.
-    for (const Collectible *collectible : Game::currentLevel.collectibles)
+    for (const Collectible *collectible : Game::currentLevel->collectibles)
     {
         // Don't render a collectible that has already been picked up.
         if (collectible->collected) continue;

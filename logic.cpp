@@ -69,6 +69,9 @@ Level::Level(const std::string &fileName) {
     std::ifstream fileStream;
     fileStream.open(fileName);
 
+    // Count the number of dollars in the current level.
+    this->dollarsLeft = 0;
+
     // Check if the file opened successfully.
     if (!fileStream.is_open()) {
         throw 404;
@@ -166,6 +169,8 @@ Level::Level(const std::string &fileName) {
                     size.y = GRID_CELL_HEIGHT;
                     Collectible *newCollectible = new Collectible(gridPosition, size, texture, 'd');
                     this->collectibles.push_back(newCollectible);
+                    // Increment the number of dollars in the current level.
+                    this->dollarsLeft++;
                 }
                 else if (type == 'n')
                 {
@@ -194,7 +199,18 @@ Level::Level(const std::string &fileName) {
     }
 }
 
-Level::~Level() { }
+Level::~Level() {
+    // Free all tiles from memory.
+    for (Tile *tile : this->tiles)
+    {
+        delete tile;
+    }
+    // Free all collectibles from memory.
+    for (Collectible *collectible : this->collectibles)
+    {
+        delete collectible;
+    }
+}
 
 void Level::restart()
 {
@@ -219,7 +235,7 @@ bool Physics::checkCollision(Tile &tile)
         // Check if the tile is deadly.
         if (tile.deadly)
         {
-            Game::currentLevel.restart();
+            Game::currentLevel->restart();
             return true;
         }
 
@@ -280,11 +296,18 @@ bool Physics::checkCollision(Collectible &collectible)
     if (Player::position.x + Player::size.x > collectible.position.x &&
         Player::position.x < collectible.position.x + collectible.size.x &&
         Player::position.y + Player::size.y > collectible.position.y &&
-        Player::position.y < collectible.position.y + collectible.size.y &&
-        !collectible.collected && collectible.type != 's')
+        Player::position.y < collectible.position.y + collectible.size.y)
     {
-        Game::score++;
-        collectible.collected = true;
+        if (collectible.type == 'd' && !collectible.collected)
+        {
+            Game::score++;
+            Game::currentLevel->dollarsLeft--;
+            collectible.collected = true;
+        }
+        else if (collectible.type == 's' && Game::currentLevel->dollarsLeft <= 0)
+        {
+            Game::nextLevel();
+        }
     }
 }
 
@@ -292,10 +315,10 @@ void Logic::updateLogic()
 {
     Physics::applyGravity();
     InputHandler::processInput();
-    for (auto i = 0; i < Game::currentLevel.tiles.size(); i++)
-        Physics::checkCollision(*Game::currentLevel.tiles[i]);
-    for (auto i = 0; i < Game::currentLevel.collectibles.size(); i++)
-        Physics::checkCollision(*Game::currentLevel.collectibles[i]);
+    for (auto i = 0; i < Game::currentLevel->tiles.size(); i++)
+        Physics::checkCollision(*Game::currentLevel->tiles[i]);
+    for (auto i = 0; i < Game::currentLevel->collectibles.size(); i++)
+        Physics::checkCollision(*Game::currentLevel->collectibles[i]);
 	Player::position += Player::v;
 
     if (Player::position.y > 2000) {
@@ -309,11 +332,24 @@ int Game::score { 0 };
 
 bool Game::running { false };
 
-Level Game::currentLevel { };
+Level *Game::currentLevel {};
 
 Timer Game::gameTimer(5);
 
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
+
+int Game::level = 0;
+std::vector<std::string> Game::levels = {"levels/testLevel.txt", "levels/testLevel2.txt"};
+
+void Game::nextLevel()
+{
+    Level *oldLevel = Game::currentLevel;
+
+    Game::level++;
+    Game::currentLevel = new Level(Game::levels[level]);
+
+    delete oldLevel;
+}
 
 void Game::initialize() {
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");
@@ -334,7 +370,7 @@ void Game::initialize() {
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
-    Level newLevel("levels/testLevel.txt");
+    Level *newLevel = new Level("levels/testLevel.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
