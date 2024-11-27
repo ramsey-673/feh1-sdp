@@ -84,14 +84,17 @@ Level::Level(const std::string &fileName) {
         // Start the current row and column at zero.
         int row = 0, col = 0;
 
+        // Get level name from text file.
         std::string levelName;
         std::getline(fileStream, levelName);        
 
+        // Write level name to screen
         LCD.Clear();
         LCD.SetFontColor(WHITE);
         LCD.WriteAt(levelName, PROTEUS_WIDTH / 2, PROTEUS_HEIGHT / 2);
         LCD.Update();
 
+        // Read every character in the file.
         char objectChar = fileStream.get();
         while(!fileStream.eof())
         {
