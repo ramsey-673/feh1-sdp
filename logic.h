@@ -82,6 +82,8 @@ public:
 	Vector position;
     // Hitbox size
 	Vector size;
+    // If true, player dies on contact
+    bool deadly;
 	
 	Tile(Vector position, Vector size, FEHImage *texture);
 
@@ -99,6 +101,8 @@ public:
 	std::vector<Tile*> tiles;
     // Contains every collectible in the current level.
 	std::vector<Collectible*> collectibles;
+    // The player's starting position for the current level.
+    Vector startingPosition;
 
     // Maps characters from input files to the corresponding game object to create.
 	static std::unordered_map<char, const char*> tileFileMap;
@@ -118,6 +122,14 @@ public:
     Level();
 	Level(const std::string &fileName);
 	~Level();
+
+    /**
+     * Restarts the state of the level.
+     * Typically called whenever the player dies.
+     * 
+     * @author Andrew Loznianu
+     */
+    void restart();
 };
 
 // Functions for calculating gravity and collisions.

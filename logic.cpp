@@ -62,9 +62,7 @@ void Tile::render(Vector screenPosition) const
 std::unordered_map<const char*, FEHImage*> Level::fileTextureMap;
 std::unordered_map<char, const char*> Level::tileFileMap;
 
-Level::Level() {
-
-}
+Level::Level() { }
 
 Level::Level(const std::string &fileName) {
     // Open the current level's file.
@@ -137,6 +135,7 @@ Level::Level(const std::string &fileName) {
                     // Initialize the player.
                     Player::position.x = gridPosition.x;
                     Player::position.y = gridPosition.y;
+                    this->startingPosition = gridPosition;
                     //Player::texture = texture;
                 }
                 else if (type == 't')
@@ -146,6 +145,17 @@ Level::Level(const std::string &fileName) {
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
                     Tile *newTile = new Tile(gridPosition, size, texture);
+                    newTile->deadly = false;
+                    this->tiles.push_back(newTile);
+                }
+                else if (type == 'w')
+                {
+                    // Create a new water tile.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT;
+                    Tile *newTile = new Tile(gridPosition, size, texture);
+                    newTile->deadly = true;
                     this->tiles.push_back(newTile);
                 }
                 else if (type == 'c')
@@ -186,6 +196,12 @@ Level::Level(const std::string &fileName) {
 
 Level::~Level() { }
 
+void Level::restart()
+{
+    // For now, this only resets the player's position.
+    Player::position = this->startingPosition;
+}
+
 void Physics::applyGravity()
 {
     // Change the player's velocity to simulate gravity
@@ -200,6 +216,13 @@ bool Physics::checkCollision(Tile &tile)
         Player::position.y + Player::size.y + Player::v.y > tile.position.y &&
         Player::position.y + Player::v.y < tile.position.y + tile.size.y)
     {
+        // Check if the tile is deadly.
+        if (tile.deadly)
+        {
+            Game::currentLevel.restart();
+            return true;
+        }
+
         // Vertical collisions
         if (Player::position.x + Player::size.x > tile.position.x &&
             Player::position.x < tile.position.x + tile.size.x)
@@ -307,6 +330,7 @@ void Game::initialize() {
     Level::tileFileMap.insert({'t', "ttextures/dirt.png"});
     Level::tileFileMap.insert({'c', "ctextures/dollar.png"});
     Level::tileFileMap.insert({'n', "ntextures/scooter.png"});
+    Level::tileFileMap.insert({'w', "wtextures/water.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
