@@ -2,10 +2,6 @@
 #include "ui.h"
 #include "graphics.h"
 
-
-
-
-
 FEHImage *Player::texture;
 FEHImage *Player::flipTexture;
 
@@ -351,7 +347,7 @@ bool Game::running { false };
 
 Level *Game::currentLevel {};
 
-Timer Game::gameTimer(5);
+Timer Game::gameTimer(5*1000*60);
 
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
@@ -360,15 +356,37 @@ std::vector<std::string> Game::levels = {"levels/testLevel.txt", "levels/testLev
 
 void Game::nextLevel()
 {
-    Level *oldLevel = Game::currentLevel;
+    if (Game::level >= Game::levels.size() - 1)
+    {
+        // The game is over!
 
-    Game::level++;
-    Game::currentLevel = new Level(Game::levels[level]);
+        // Write end screen.
+        LCD.Clear();
+        LCD.SetFontColor(WHITE);
+        LCD.WriteLine("You win!");
+        LCD.WriteLine("Time Left: " + std::to_string(Game::gameTimer.getTimeLeft()));
+        LCD.Update();
 
-    delete oldLevel;
+        // Wait so player can read it.
+        Sleep(3.0);
+
+        // Close game instance.
+        running = false;
+        
+    }
+    else
+    {
+        Level *oldLevel = Game::currentLevel;
+
+        Game::level++;
+        Game::currentLevel = new Level(Game::levels[level]);
+
+        delete oldLevel;
+    }
 }
 
 void Game::initialize() {
+
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");
     FEHImage *playerFlipped = new FEHImage("textures/food_robot_right.png");
 
