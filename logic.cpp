@@ -65,6 +65,9 @@ std::unordered_map<char, const char*> Level::tileFileMap;
 Level::Level() { }
 
 Level::Level(const std::string &fileName) {
+    // Used to show waiting screen.
+    float startTime = TimeNow();
+
     // Open the current level's file.
     std::ifstream fileStream;
     fileStream.open(fileName);
@@ -81,6 +84,13 @@ Level::Level(const std::string &fileName) {
         // Start the current row and column at zero.
         int row = 0, col = 0;
 
+        std::string levelName;
+        std::getline(fileStream, levelName);        
+
+        LCD.Clear();
+        LCD.SetFontColor(WHITE);
+        LCD.WriteAt(levelName, PROTEUS_WIDTH / 2, PROTEUS_HEIGHT / 2);
+        LCD.Update();
 
         char objectChar = fileStream.get();
         while(!fileStream.eof())
@@ -197,6 +207,10 @@ Level::Level(const std::string &fileName) {
         // Close the file.
         fileStream.close();
     }
+
+    // Wait until at least three seconds have passed
+    // for the player to read the loading screen.
+    while (TimeNow() - 3 < startTime);
 }
 
 Level::~Level() {
