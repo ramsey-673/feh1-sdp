@@ -106,6 +106,11 @@ public:
     // The player's starting position for the current level.
     Vector startingPosition;
 
+    // Stores the bottom-right corner of the play area.
+    // The upper-left corner is always (0, 0)
+    Vector playLimit;
+
+
     // Maps characters from input files to the corresponding game object to create.
 	static std::unordered_map<char, const char*> tileFileMap;
 

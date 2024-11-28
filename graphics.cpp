@@ -1,6 +1,7 @@
 #include "graphics.h"
 #include "logic.h"
 #include "ui.h"
+#include <cmath>
 
 
 #define PROTEUS_WIDTH 319
@@ -56,6 +57,17 @@ void Camera::follow(const Vector &targetPosition, const int spriteWidth, const i
     // so the center of the camera is at the center of the sprite.
     Camera::origin.x += spriteWidth / 2;
     Camera::origin.y += spriteHeight / 2;
+
+
+    // Move the camera if it's outside the upper-left play area.
+    Camera::origin.x = fmax(0, Camera::origin.x);
+    Camera::origin.y = fmax(0, Camera::origin.y);
+
+
+    // Move the camera if it's outside the upper-right play area.
+    Camera::origin.x += fmin(0, Game::currentLevel->playLimit.x - (Camera::origin.x + PROTEUS_WIDTH));
+    Camera::origin.y += fmin(0, Game::currentLevel->playLimit.y - (Camera::origin.y + PROTEUS_HEIGHT));
+
 }
 void Camera::follow(const Vector &targetPosition)
 {
@@ -113,7 +125,7 @@ void Graphics::render()
     Vector screenPosition = Camera::getScreenPosition(Player::position);
 
     // Render the player to the screen.
-    // No need to check if the player is in frame
+    // No need to check if the player is in frame 
     // because they are always in frame.
     Player::render(screenPosition);
 

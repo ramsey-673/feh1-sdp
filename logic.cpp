@@ -97,11 +97,16 @@ Level::Level(const std::string &fileName) {
 
         // Read every character in the file.
         char objectChar = fileStream.get();
+
+        // Used to set the play area.
+        int maxX = 0;
         while(!fileStream.eof())
         {
             
             while (objectChar != '\n')
             {
+                
+
                 // A space means we render nothing in this tile.
                 if (objectChar == ' ')
                 {
@@ -197,16 +202,22 @@ Level::Level(const std::string &fileName) {
                     this->collectibles.push_back(newCollectible);
                 }
 
+                maxX = std::fmax(maxX, gridPosition.x);
                 // Get the next character.
                 objectChar = fileStream.get();
                 // Increment column.
                 col++;
             }
-            // Increment row.
+            
+            
             col = 0;
+            // Increment row.
             row++;
             objectChar = fileStream.get();
         }
+
+        // Set the current level's bottom-right corner.
+        this->playLimit = {(float)(maxX) + GRID_CELL_WIDTH - 1, (float)(row) * GRID_CELL_HEIGHT - 1};
 
         // Close the file.
         fileStream.close();
