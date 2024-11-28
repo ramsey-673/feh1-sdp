@@ -417,6 +417,7 @@ void Game::initialize() {
     Level::tileFileMap.insert({'d', "ttextures/dirt.png"});
     Level::tileFileMap.insert({'g', "ttextures/grass.png"});
     Level::tileFileMap.insert({'s', "ttextures/stone.png"});
+    Level::tileFileMap.insert({'S', "ttextures/stone_top.png"});
     Level::tileFileMap.insert({'b', "ttextures/stone_bricks.png"});
     Level::tileFileMap.insert({'c', "ctextures/dollar.png"});
     Level::tileFileMap.insert({'n', "ntextures/scooter.png"});
