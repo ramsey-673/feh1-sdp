@@ -1,0 +1,49 @@
+Morrill Tower
+textures/morrill_tower_background.png
+ssssssssssssssssssssssssssssssss
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+s                              s
+sssssssssssssssssssssssssss    s
+s         s   s   s   s   ss   s
+s         s   s   s   s   s    s
+s         s   s   s   s   s    s
+s                              s
+s         s   s   s   s   s   ss
+s         s,,,s,,,s,,,s,,,s,,,ss
+s    sssssssssssssssssssssssssss
+s               s      .       s
+s               .              s
+s  s                           s
+s  .     .                     s
+s        s             .       s
+s        s      .      s       s
+ssssssssssssssssssssssssss.    s
+s                              s
+s                            s s
+s                              s
+s                              s
+s           s     s     s      s
+s     .ss,,,,,,,,,,,,,,,,,,,,,,s
+s     .sssssssssssssssssssssssss
+s       s.     s.               s
+s  s    s.     s.               s
+s  .    s.     s.               s
+s       s.  .  s.  .           .s
+s       s.  s  s.  s           .s
+s           s      s           .s
+sssssssssssssssssssssssss.    .s
+s                        .    .s
+s                        .    .s
+s                        .  s .s
+s                        .    .s
+s                        .    .s
+s   p                          s
+ssssssssssssssssssssssssssssssss

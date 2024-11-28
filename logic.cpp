@@ -387,7 +387,7 @@ Timer Game::gameTimer(5*1000*60);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/rpac.txt", "levels/rpac.txt", "levels/rpac.txt"};
+std::vector<std::string> Game::levels = {"levels/testLevel2.txt", "levels/mirror_lake.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
 
 void Game::nextLevel()
 {
@@ -428,9 +428,6 @@ void Game::initialize() {
     Player::texture = playerNormal;
     Player::flipTexture = playerFlipped;
 
-    FEHImage *background = new FEHImage("levels/testLevel2.txt");
-    Graphics::background = background;
-
     printf("INITIALIZING GAME\n");
     Level::tileFileMap.insert({'p', "ptextures/food_robot.png"});
     Level::tileFileMap.insert({'d', "ttextures/dirt.png"});
@@ -450,10 +447,12 @@ void Game::initialize() {
     Level::tileFileMap.insert({'P', "Ptextures/bench_press.png"});
     Level::tileFileMap.insert({'i', "ttextures/pillar.png"});
     Level::tileFileMap.insert({'I', "Ttextures/pillar_background.png"});
+    Level::tileFileMap.insert({'.', "wtextures/spikes.png"});
+    Level::tileFileMap.insert({',', "wtextures/acid.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
-    Level *newLevel = new Level("levels/testLevel2.txt");
+    Level *newLevel = new Level("levels/morrill_tower.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
