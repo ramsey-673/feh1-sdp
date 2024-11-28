@@ -191,6 +191,25 @@ Level::Level(const std::string &fileName) {
                     // Increment the number of dollars in the current level.
                     this->dollarsLeft++;
                 }
+                else if (type == 'T')
+                {
+                    // Create a transparent tile.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT;
+                    Collectible *newCollectible = new Collectible(gridPosition, size, texture, 't');
+                    this->collectibles.push_back(newCollectible);
+                }
+                else if (type == 'P')
+                {
+                    // Create a prop tile.
+                    Vector size;
+                    size.x = GRID_CELL_WIDTH;
+                    size.y = GRID_CELL_HEIGHT - 5;
+                    gridPosition.y += 5;
+                    Collectible *newCollectible = new Collectible(gridPosition, size, texture, 't');
+                    this->collectibles.push_back(newCollectible);
+                }
                 else if (type == 'n')
                 {
                     // Create a new scooter.
@@ -368,7 +387,7 @@ Timer Game::gameTimer(5*1000*60);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/testLevel2.txt", "levels/mirror_lake.txt"};
+std::vector<std::string> Game::levels = {"levels/rpac.txt", "levels/rpac.txt", "levels/rpac.txt"};
 
 void Game::nextLevel()
 {
@@ -409,7 +428,7 @@ void Game::initialize() {
     Player::texture = playerNormal;
     Player::flipTexture = playerFlipped;
 
-    FEHImage *background = new FEHImage("textures/mirror_lake.png");
+    FEHImage *background = new FEHImage("levels/testLevel2.txt");
     Graphics::background = background;
 
     printf("INITIALIZING GAME\n");
@@ -418,10 +437,16 @@ void Game::initialize() {
     Level::tileFileMap.insert({'g', "ttextures/grass.png"});
     Level::tileFileMap.insert({'s', "ttextures/stone.png"});
     Level::tileFileMap.insert({'b', "ttextures/stone_bricks.png"});
+    Level::tileFileMap.insert({'B', "ttextures/border.png"});
+    Level::tileFileMap.insert({'D', "wtextures/border.png"});
     Level::tileFileMap.insert({'c', "ctextures/dollar.png"});
     Level::tileFileMap.insert({'n', "ntextures/scooter.png"});
     Level::tileFileMap.insert({'w', "wtextures/water.png"});
-    Level::tileFileMap.insert({'B', "ttextures/border.png"});
+    Level::tileFileMap.insert({'t', "Ptextures/treadmill.png"});
+    Level::tileFileMap.insert({'r', "Ptextures/squat_rack.png"});
+    Level::tileFileMap.insert({'P', "Ptextures/bench_press.png"});
+    Level::tileFileMap.insert({'i', "ttextures/pillar.png"});
+    Level::tileFileMap.insert({'I', "Ttextures/pillar_background.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
