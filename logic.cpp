@@ -217,7 +217,7 @@ Level::Level(const std::string &fileName) {
         }
 
         // Set the current level's bottom-right corner.
-        this->playLimit = {(float)(maxX) + GRID_CELL_WIDTH - 1, (float)(row) * GRID_CELL_HEIGHT - 1};
+        this->playLimit = {(float)(maxX) + GRID_CELL_WIDTH - 2, (float)(row) * GRID_CELL_HEIGHT - 1};
 
         // Close the file.
         fileStream.close();
