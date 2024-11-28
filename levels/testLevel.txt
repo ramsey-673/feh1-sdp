@@ -1,6 +1,0 @@
-Test level 1!
-t                                          t
-t     c                                    t
-t             p                            t
-t n                                        t
-ttttttttttttttttttttttttttwwwttttttttttttttt

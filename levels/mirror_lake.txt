@@ -1,0 +1,13 @@
+Mirror Lake
+textures/mirror_lake_background.png
+                                                                        c  
+                                                                    bbbbbbb
+                                                                  bbbbbbbbb
+      n                                                           bbbbbbbbb
+gggggggggggggggggggg                                                bbbbbbb
+ddddddddddddddddddddd                                               bbbbbbb    
+                                                               p    bbbbbbb
+                                                        ggggggggggggggggggg
+    ss   sss          ss      ss          s            dddddddddddddddddddd
+   css   sss    ss   sssss   ssss  c s   sss     ss  dddddddddddddddddddddd
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwdddddddddddddddddddddd

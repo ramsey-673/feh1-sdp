@@ -1,3 +1,4 @@
 Second test level!
-p    n            c           c              c     
-ttttttttttwwwwtttttttttwwwttttttttttttttttwtttttttttt
+textures/ohio_union_background.png
+p    n                                          
+ggggggggggg

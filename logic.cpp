@@ -90,6 +90,11 @@ Level::Level(const std::string &fileName) {
         LCD.WriteAt(levelName, PROTEUS_WIDTH / 2, PROTEUS_HEIGHT / 2);
         LCD.Update();
 
+        // Set level background.
+        std::string levelBackground;
+        std::getline(fileStream, levelBackground);
+        Graphics::background = new FEHImage(levelBackground.c_str());
+
         // Read every character in the file.
         char objectChar = fileStream.get();
         while(!fileStream.eof())
@@ -352,7 +357,7 @@ Timer Game::gameTimer(5*1000*60);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/testLevel.txt", "levels/testLevel2.txt"};
+std::vector<std::string> Game::levels = {"levels/testLevel2.txt", "levels/mirror_lake.txt"};
 
 void Game::nextLevel()
 {
@@ -393,19 +398,22 @@ void Game::initialize() {
     Player::texture = playerNormal;
     Player::flipTexture = playerFlipped;
 
-    FEHImage *background = new FEHImage("textures/ohio_union_background.png");
+    FEHImage *background = new FEHImage("textures/mirror_lake.png");
     Graphics::background = background;
 
     printf("INITIALIZING GAME\n");
     Level::tileFileMap.insert({'p', "ptextures/food_robot.png"});
-    Level::tileFileMap.insert({'t', "ttextures/dirt.png"});
+    Level::tileFileMap.insert({'d', "ttextures/dirt.png"});
+    Level::tileFileMap.insert({'g', "ttextures/grass.png"});
+    Level::tileFileMap.insert({'s', "ttextures/stone.png"});
+    Level::tileFileMap.insert({'b', "ttextures/stone_bricks.png"});
     Level::tileFileMap.insert({'c', "ctextures/dollar.png"});
     Level::tileFileMap.insert({'n', "ntextures/scooter.png"});
     Level::tileFileMap.insert({'w', "wtextures/water.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
-    Level *newLevel = new Level("levels/testLevel.txt");
+    Level *newLevel = new Level("levels/testLevel2.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 

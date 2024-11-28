@@ -20,10 +20,10 @@
 #define GRID_CELL_HEIGHT 16
 
 #define GRAVITY_X 0
-#define GRAVITY_Y 1
+#define GRAVITY_Y .8
 
-#define PLAYER_SPEED 7
-#define JUMP_STRENGTH 10
+#define PLAYER_SPEED 4
+#define JUMP_STRENGTH 8
 #define NUMBER_JUMPS 2
 
 // The player
