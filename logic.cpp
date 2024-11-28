@@ -410,6 +410,7 @@ void Game::initialize() {
     Level::tileFileMap.insert({'c', "ctextures/dollar.png"});
     Level::tileFileMap.insert({'n', "ntextures/scooter.png"});
     Level::tileFileMap.insert({'w', "wtextures/water.png"});
+    Level::tileFileMap.insert({'B', "ttextures/border.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
