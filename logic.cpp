@@ -295,10 +295,14 @@ bool Physics::checkCollision(Tile &tile)
             if (Player::position.y < tile.position.y &&
                 Player::position.y + Player::size.y + std::ceil(Player::v.y) > tile.position.y)
             {
-                if (std::fabs(Player::v.x) > 0.05)
-                    Player::v.x /= 1.5;
-                else
-                    Player::v.x = 0;
+                // Only apply friction if the player isn't trying to move.
+                if (InputHandler::touchOrigin.x == -1 && InputHandler::touchOrigin.y == -1)
+                {
+                    if (std::fabs(Player::v.x) > 0.05)
+                        Player::v.x /= 1.5;
+                    else
+                        Player::v.x = 0;
+                }
                 Player::v.y = 0;
                 Player::position.y = tile.position.y - Player::size.y;
 

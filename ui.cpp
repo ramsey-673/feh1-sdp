@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "logic.h"
-#include "Utils.h"
+#include "utils.h"
 
 bool InputHandler::previousState = false;
 Vector InputHandler::touchOrigin = {-1, -1};
