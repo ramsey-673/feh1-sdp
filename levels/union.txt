@@ -1,25 +1,23 @@
 Ohio Union
 textures/ohio_union_background.png
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-BrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrB
-Br                                          rB
-Br                                          rB
-Br                       .                  rB
-Br khh         ..        .                  rB
-Brttttttt   ttttttttttttttttttt.   ttt   tttrB
-Br                                 r        rB
-Br           .                     r        rB
-Br           ..                    r        rB
-Br     .  c ...  c   .    .        r kh  n  rB
-Br   ttttttttttttttttttttttttttt   rttttttttrB
-Br                                 r        rB
-Br                                 r        rB
-Br              .                           rB
-Br      .. khh  .  kh     .         kh p kh rB
-Bttttttttttttttttttttttttttttttt   tttttttttrB
-Brrrrrrrrrrrrrrrrrrrrrr               rrrrrrrB
-B                     r..             r      B
-B                     r               r      B
-B                     r c h .    kh   r      B
-B                     rtttttttttttttttr      B
-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+r                                          r
+r                                          r
+r                       .                  r
+r khh         ..        .                  r
+rttttttt   ttttttttttttttttttt.   ttt   tttr
+r                                 r        r
+r           .                     r        r
+r           ..                    r        r
+r     .  c ...  c   .    .        r kh  n  r
+r   ttttttttttttttttttttttttttt   rttttttttr
+r                                 r        r
+r                                 r        r
+r              .                           r
+r      .. khh  .  kh     .         kh p kh r
+ttttttttttttttttttttttttttttttt   tttttttttr
+                     r               r
+                     r..             r
+                     r               r
+                     r c h .    kh   r
+                     rtttttttttttttttr
