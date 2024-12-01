@@ -19,6 +19,11 @@ public:
     Timer(double duration);
 
     /*
+     * Set the remaining time.
+     */
+    void SetTimer(double duration);
+
+    /*
      * Number of seconds remaining.
      */
     int Remaining() const;

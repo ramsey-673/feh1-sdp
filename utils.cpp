@@ -13,6 +13,11 @@ Timer::Timer(double duration)
     stopTime = time(NULL) + duration;
 }
 
+void Timer::SetTimer(double duration)
+{
+    stopTime = time(NULL) + duration;
+}
+
 int Timer::Remaining() const
 {
     return stopTime - time(NULL);

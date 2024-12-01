@@ -450,6 +450,7 @@ void Game::gameOver()
 
 void Game::initialize()
 {
+    gameTimer.SetTimer(5*60);
     LCD.SetBackgroundColor(BLACK);
 
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");

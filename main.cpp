@@ -44,7 +44,6 @@ int main()
     }
 
     Game::initialize();
-
     Game::running = true;
     while(Game::running)
     {
