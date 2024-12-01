@@ -6,15 +6,24 @@
 #include <cmath>
 #include <string>
 
+// Positions for the score and timer
 #define SCORE_X 5
 #define SCORE_Y 25
 #define TIMER_X 5
 #define TIMER_Y 5
 
+// Dimensions for the score/timer box
 #define BOX_X 0
 #define BOX_Y 0
 #define BOX_W 60
 #define BOX_H 45
+
+// Dimensions for the quit button
+#define QUIT_X 300
+#define QUIT_Y 0
+#define QUIT_W 20
+#define QUIT_H 20
+#define QUIT_PADDING 3
 
 #define OUTER_CIRCLE_RADIUS 35
 #define INNER_CIRCLE_RADIUS 10
@@ -24,8 +33,8 @@
 
 #define SCORE_COLOR WHITE
 #define TIMER_COLOR WHITE
-#define BOX_COLOR BLACK
-#define BOX_BORDER WHITE
+#define HUD_COLOR BLACK
+#define HUD_BORDER WHITE
 
 
 
@@ -82,4 +91,8 @@ public:
     static Vector touchOrigin;
     static Vector smallCircle;
 
+    /*
+     * Clears input and the previous state.
+     */
+    static void ClearInput();
 };

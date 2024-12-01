@@ -119,13 +119,22 @@ void InputHandler::processInput()
     InputHandler::previousState = currentState;
 }
 
+void InputHandler::ClearInput()
+{
+    previousState = false;
+    touchOrigin = { -1, -1 };
+}
+
 void UIManager::renderUI()
 {
-    // Draw a background box (so the text shows up easier)
-    LCD.SetFontColor(BOX_COLOR);
+    // Draw a background box (so the text shows up easier) for the stats and quit button
+    LCD.SetFontColor(HUD_COLOR);
     LCD.FillRectangle(BOX_X, BOX_Y, BOX_W, BOX_H);
-    LCD.SetFontColor(BOX_BORDER);
+    LCD.FillRectangle(QUIT_X, QUIT_Y, QUIT_W, QUIT_H);
+    LCD.SetFontColor(HUD_BORDER);
     LCD.DrawRectangle(BOX_X, BOX_Y, BOX_W, BOX_H);
+    LCD.DrawRectangle(QUIT_X, QUIT_Y, QUIT_W, QUIT_H);
+    LCD.WriteAt("X", QUIT_X + QUIT_PADDING, QUIT_Y + QUIT_PADDING);
     // Render timer and score.
     UIManager::renderTimer();
     UIManager::renderScore(Game::score);

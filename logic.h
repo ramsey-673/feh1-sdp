@@ -189,6 +189,8 @@ public:
 
     // True if the game is updating.
 	static bool running;
+    // True if the player opts to go back to the main menu.
+    static bool mainMenu;
     /*
      * Initializes the game.
      */

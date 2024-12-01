@@ -19,40 +19,47 @@
 
 int main()
 {
-    // Start with the main menu
-    int option = menu();
-
-    // Exit condition:
-    // The player chooses to play the game.
-    while (option != 0)
+    while (true)
     {
-        switch (option)
+        // Reset main menu flag
+        Game::mainMenu = false;
+
+        // Start with the main menu
+        int option = menu();
+
+        // Exit condition:
+        // The player chooses to play the game.
+        while (option != 0)
         {
-            case 1: // Display main menu
-                option = menu();
-                break;
-            case 2: // Display statistics
-                option = stats();
-                break;
-            case 3: // Display tutorial
-                option = tutorial();
-                break;
-            case 4: // Display credits
-                option = credits();
-                break;
+            switch (option)
+            {
+                case 1: // Display main menu
+                    option = menu();
+                    break;
+                case 2: // Display statistics
+                    option = stats();
+                    break;
+                case 3: // Display tutorial
+                    option = tutorial();
+                    break;
+                case 4: // Display credits
+                    option = credits();
+                    break;
+            }
         }
+
+        Game::initialize();
+        Game::running = true;
+        while(Game::running)
+        {
+            Game::update();
+        } 
+
+        Game::cleanup();
+
+        // Don't quit game if the player wants to go back to the menu
+        if (!Game::mainMenu) break;
     }
-
-    Game::initialize();
-    Game::running = true;
-    while(Game::running)
-    {
-        Game::update();
-    } 
-
-    Game::cleanup();
-
-    return 0;
 }
 
 

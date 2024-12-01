@@ -401,6 +401,8 @@ int Game::score { 0 };
 
 bool Game::running { false };
 
+bool Game::mainMenu { false };
+
 Level *Game::currentLevel { };
 
 Timer Game::gameTimer(5*60);
@@ -436,6 +438,10 @@ void Game::nextLevel()
 
         Game::level++;
         Game::currentLevel = new Level(Game::levels[level]);
+
+        // Reset input and player velocity.
+        Player::v = { 0, 0 };
+        InputHandler::ClearInput();
 
         delete oldLevel;
     }
@@ -493,9 +499,7 @@ void Game::initialize()
 
 void Game::update()
 {
-    // TEMPORARY GRAPHICS/PHYSICS CODE
-    //printf("LOADING FRAME\n");
-
+    // Quit the game if the timer runs out.
     if (gameTimer.Remaining() < 0)
     {
         LCD.Clear();
@@ -503,13 +507,25 @@ void Game::update()
         LCD.Update();
         Sleep(3.0);
         running = false;
+        return;
     }
 
-    //printf("COMPUTING LOGIC\n");
     Logic::updateLogic();
-    //printf("COMPUTED LOGIC\n");
+
+    // Go back to the main menu if the player hits the X button.
+    if (InputHandler::touchOrigin.x > QUIT_X && InputHandler::touchOrigin.x < QUIT_X + QUIT_X &&
+        InputHandler::touchOrigin.y > QUIT_Y && InputHandler::touchOrigin.y < QUIT_Y + QUIT_H)
+    {
+        running = false;
+        mainMenu = true;
+        // Reset score, input, and player velocity.
+        score = 0;
+        Player::v = { 0, 0 };
+        InputHandler::ClearInput();
+        return;
+    }
+    
     LCD.Clear();
-    //printf("RENDERING GRAPHICS\n");
     Graphics::render();
     UIManager::renderUI();
 
