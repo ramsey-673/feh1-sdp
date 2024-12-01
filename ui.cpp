@@ -121,14 +121,21 @@ void InputHandler::processInput()
 
 void UIManager::renderUI()
 {
-    UIManager::renderTimer(Game::gameTimer.getTimeLeft());
+    // Draw a background box (so the text shows up easier)
+    LCD.SetFontColor(BOX_COLOR);
+    LCD.FillRectangle(BOX_X, BOX_Y, BOX_W, BOX_H);
+    LCD.SetFontColor(BOX_BORDER);
+    LCD.DrawRectangle(BOX_X, BOX_Y, BOX_W, BOX_H);
+    // Render timer and score.
+    UIManager::renderTimer();
     UIManager::renderScore(Game::score);
 }
 
-void UIManager::renderTimer(double timeLeft)
+void UIManager::renderTimer()
 {
     //Generate output message.
-    std::string timerMessage = "Time left: " + std::to_string(timeLeft); 
+    int seconds = Game::gameTimer.Seconds();
+    std::string timerMessage = Game::gameTimer.Display();
 
     // Draw timer to screen.
     LCD.SetFontColor(TIMER_COLOR);
@@ -138,7 +145,7 @@ void UIManager::renderTimer(double timeLeft)
 void UIManager::renderScore(int score)
 {
     // Generate output message.
-    std::string scoreMessage = "Score: " + std::to_string(score);
+    std::string scoreMessage = "$" + std::to_string(score);
 
     // Draw score to screen.
     LCD.SetFontColor(SCORE_COLOR);

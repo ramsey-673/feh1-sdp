@@ -142,6 +142,4 @@ void Graphics::render()
         LCD.SetFontColor(INNER_CIRCLE_COLOR);
         LCD.DrawCircle(InputHandler::smallCircle.x, InputHandler::smallCircle.y, INNER_CIRCLE_RADIUS);
     }
-
-    
 }

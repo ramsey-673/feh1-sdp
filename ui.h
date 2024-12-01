@@ -6,10 +6,15 @@
 #include <cmath>
 #include <string>
 
-#define SCORE_X 0
-#define SCORE_Y 0
-#define TIMER_X 0
-#define TIMER_Y 50
+#define SCORE_X 5
+#define SCORE_Y 25
+#define TIMER_X 5
+#define TIMER_Y 5
+
+#define BOX_X 0
+#define BOX_Y 0
+#define BOX_W 60
+#define BOX_H 45
 
 #define OUTER_CIRCLE_RADIUS 35
 #define INNER_CIRCLE_RADIUS 10
@@ -19,6 +24,10 @@
 
 #define SCORE_COLOR WHITE
 #define TIMER_COLOR WHITE
+#define BOX_COLOR BLACK
+#define BOX_BORDER WHITE
+
+
 
 // Menu functions
 int menu();
@@ -34,7 +43,7 @@ private:
      * @param timeLeft
      *      the current value of the timer
      */
-    static void renderTimer(double timeLeft);
+    static void renderTimer();
     /**
      * Draws the game score to the screen.
      * 

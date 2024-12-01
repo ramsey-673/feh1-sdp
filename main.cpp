@@ -56,6 +56,8 @@ int main()
     return 0;
 }
 
+
+
 /* Menu functions */
 
 int menu()
@@ -63,6 +65,8 @@ int menu()
     // Display code
     LCD.Clear();
     LCD.WriteAt("Food Robot Simulator", 40, 30);
+    FEHImage robot("textures/big_food_robot.png");
+    robot.Draw(144, 72);
     LCD.WriteAt("Play", 134, 120);
     LCD.WriteAt("Stats", 130, 145);
     LCD.WriteAt("Tutorial", 112, 170);

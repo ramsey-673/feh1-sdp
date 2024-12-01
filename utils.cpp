@@ -1,20 +1,55 @@
 #include "utils.h"
-#include "FEHUtility.h"
+
+#include <cmath>
+#include <string>
+#include <time.h>
+
+
+
+/* Timer */
 
 Timer::Timer(double duration)
 {
-    this->stopTime = TimeNow() + duration;
+    stopTime = time(NULL) + duration;
 }
 
-bool Timer::isTimeUp() const
+int Timer::Remaining() const
 {
-    return TimeNow() > this->stopTime;
+    return stopTime - time(NULL);
 }
 
-double Timer::getTimeLeft() const
+int Timer::Minutes() const
 {
-    return this->stopTime - TimeNow();
+    return std::floor(Remaining() / 60);
 }
+
+int Timer::Seconds() const
+{
+    return Remaining() % 60;
+}
+
+std::string Timer::Display() const
+{
+    int seconds = Seconds();
+    if (seconds < 10)
+        return std::to_string(Minutes()) + ":0" + std::to_string(seconds);
+    else
+        return std::to_string(Minutes()) + ":" + std::to_string(seconds);
+}
+
+void Timer::Pause()
+{
+    pauseTime = time(NULL);
+}
+
+void Timer::Play()
+{
+    stopTime += time(NULL) - pauseTime;
+}
+
+
+
+/* Vector */
 
 Vector Vector::operator+(const Vector& a)
 {

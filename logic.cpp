@@ -2,7 +2,12 @@
 #include "ui.h"
 #include "graphics.h"
 
+
+
+/* Player */
+
 FEHImage *Player::texture;
+
 FEHImage *Player::flipTexture;
 
 Vector Player::position { 50, 50 };
@@ -13,7 +18,6 @@ Vector Player::v { -2, 0 };
 
 int Player::jumpCounter = 0;
 
-// TEMPORARY GRAPHICS CODE
 void Player::render(Vector screenPosition)
 {
     // Just draw a blue rectangle
@@ -38,6 +42,8 @@ void Collectible::render(Vector screenPosition) const
     this->texture->Draw(screenPosition.x, screenPosition.y);
 }
 
+
+
 /* Tile */
 
 Tile::Tile(Vector position, Vector size, FEHImage *texture): position(position), size(size), texture(texture) { }
@@ -55,12 +61,18 @@ void Tile::render(Vector screenPosition) const
     // printf("Finished drawing tile\n");
 }
 
+
+
+/* Level */
+
 std::unordered_map<const char*, FEHImage*> Level::fileTextureMap;
+
 std::unordered_map<char, const char*> Level::tileFileMap;
 
 Level::Level() { }
 
-Level::Level(const std::string &fileName) {
+Level::Level(const std::string &fileName)
+{
     // Used to show waiting screen.
     float startTime = TimeNow();
 
@@ -72,7 +84,8 @@ Level::Level(const std::string &fileName) {
     this->dollarsLeft = 0;
 
     // Check if the file opened successfully.
-    if (!fileStream.is_open()) {
+    if (!fileStream.is_open())
+    {
         throw 404;
     }
     else
@@ -102,11 +115,8 @@ Level::Level(const std::string &fileName) {
         int maxX = 0;
         while(!fileStream.eof())
         {
-            
             while (objectChar != '\n')
             {
-                
-
                 // A space means we render nothing in this tile.
                 if (objectChar == ' ')
                 {
@@ -131,10 +141,6 @@ Level::Level(const std::string &fileName) {
                 // Extract the object type from the fileName string literal.
                 char type = fileName[0];
                 fileName++;
-
-                
-                // printf("CHECKING IF MAP CONTAINS TEXTURE, %s\n", fileName);
-
                 
                 // Check if the texture is not already loaded into memory.
                 if (Level::fileTextureMap.find(fileName) == Level::fileTextureMap.end())
@@ -228,7 +234,6 @@ Level::Level(const std::string &fileName) {
                 col++;
             }
             
-            
             col = 0;
             // Increment row.
             row++;
@@ -244,10 +249,14 @@ Level::Level(const std::string &fileName) {
 
     // Wait until at least three seconds have passed
     // for the player to read the loading screen.
+    // Pause the timer while this is happening.
+    Game::gameTimer.Pause();
     while (TimeNow() - 3 < startTime);
+    Game::gameTimer.Play();
 }
 
-Level::~Level() {
+Level::~Level()
+{
     // Free all tiles from memory.
     for (Tile *tile : this->tiles)
     {
@@ -265,6 +274,10 @@ void Level::restart()
     // For now, this only resets the player's position.
     Player::position = this->startingPosition;
 }
+
+
+
+/* Physics */
 
 void Physics::applyGravity()
 {
@@ -373,25 +386,30 @@ void Logic::updateLogic()
         Physics::checkCollision(*Game::currentLevel->collectibles[i]);
 	Player::position += Player::v;
 
-    if (Player::position.y > 2000) {
+    if (Player::position.y > 2000)
+    {
         printf("ERROR: Player is out of bounds!");
-        
         Game::running = false;
     }
 }
+
+
+
+/* Game */
 
 int Game::score { 0 };
 
 bool Game::running { false };
 
-Level *Game::currentLevel {};
+Level *Game::currentLevel { };
 
-Timer Game::gameTimer(5*1000*60);
+Timer Game::gameTimer(5*60);
 
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
+
+std::vector<std::string> Game::levels = { "levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt" };
 
 void Game::nextLevel()
 {
@@ -403,7 +421,7 @@ void Game::nextLevel()
         LCD.Clear();
         LCD.SetFontColor(WHITE);
         LCD.WriteLine("You win!");
-        LCD.WriteLine("Time Left: " + std::to_string(Game::gameTimer.getTimeLeft()));
+        LCD.WriteLine("Time Left: " + Game::gameTimer.Display());
         LCD.Update();
 
         // Wait so player can read it.
@@ -411,7 +429,6 @@ void Game::nextLevel()
 
         // Close game instance.
         running = false;
-        
     }
     else
     {
@@ -424,9 +441,16 @@ void Game::nextLevel()
     }
 }
 
-void Game::initialize() {
+void Game::gameOver()
+{
+    LCD.SetFontColor(WHITE);
+    LCD.WriteLine("Game Over.");
+    LCD.WriteLine("Money Collected: $" + std::to_string(score));
+}
 
-    LCD.SetBackgroundColor(0xD3D3D3);
+void Game::initialize()
+{
+    LCD.SetBackgroundColor(BLACK);
 
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");
     FEHImage *playerFlipped = new FEHImage("textures/food_robot_right.png");
@@ -464,8 +488,6 @@ void Game::initialize() {
     Level *newLevel = new Level("levels/union.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
-
-    
 }
 
 void Game::update()
@@ -473,17 +495,22 @@ void Game::update()
     // TEMPORARY GRAPHICS/PHYSICS CODE
     //printf("LOADING FRAME\n");
 
-    
+    if (gameTimer.Remaining() < 0)
+    {
+        LCD.Clear();
+        gameOver();
+        LCD.Update();
+        Sleep(3.0);
+        running = false;
+    }
 
     //printf("COMPUTING LOGIC\n");
     Logic::updateLogic();
     //printf("COMPUTED LOGIC\n");
-    
     LCD.Clear();
-
     //printf("RENDERING GRAPHICS\n");
     Graphics::render();
-
+    UIManager::renderUI();
 
     LCD.Update();
 }

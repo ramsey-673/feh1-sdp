@@ -1,5 +1,9 @@
-
 #pragma once
+
+#include <string>
+
+
+
 /**
  * Game timer.
  * 
@@ -8,26 +12,33 @@
 class Timer
 {
 private:
-    /**
-     * The relative stop time of the timer.
-     */
     double stopTime;
+    double pauseTime;
+
 public:
     Timer(double duration);
-    /**
-     * Check if the timer is ongoing.
-     * 
-     * @returns true if the timer is ongoing
-     * and false if it expired.
+
+    /*
+     * Number of seconds remaining.
      */
-    bool isTimeUp() const;
-    /**
-     * Calculates the time in seconds until the timer expires.
-     * 
-     * @returns time in seconds until timer expires
+    int Remaining() const;
+
+    /*
+     * Number of minutes and seconds remaining on the timer
+     * (for display purposes)
      */
-    double getTimeLeft() const; // Get remaining time
+    int Minutes() const;
+    int Seconds() const;
+    std::string Display() const;
+
+    /*
+     * Stop/start the timer.
+     */
+    void Pause();
+    void Play();
 };
+
+
 
 // Simple (x, y) pair with overloaded math operators
 class Vector

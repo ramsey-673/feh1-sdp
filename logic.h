@@ -216,6 +216,10 @@ public:
      * @author Andrew Loznianu
      */
     static void nextLevel();
+    /*
+     * Displays an end screen if the player fails to complete the game on time.
+     */
+    static void gameOver();
 
     // Used to keep track of current level.
     static int level;
