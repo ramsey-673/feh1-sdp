@@ -456,6 +456,7 @@ void Game::gameOver()
 
 void Game::initialize()
 {
+    
     gameTimer.SetTimer(5*60);
     LCD.SetBackgroundColor(BLACK);
 
@@ -492,6 +493,7 @@ void Game::initialize()
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
+    Game::level = 0;
     Level *newLevel = new Level("levels/union.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
@@ -507,6 +509,7 @@ void Game::update()
         LCD.Update();
         Sleep(3.0);
         running = false;
+        mainMenu = true;
         return;
     }
 
