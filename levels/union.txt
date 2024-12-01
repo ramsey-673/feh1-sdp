@@ -16,8 +16,8 @@ r                                 r        r
 r              .                           r
 r      .. khh  .  kh     .         kh p kh r
 ttttttttttttttttttttttttttttttt   tttttttttr
-                     r               r
-                     r..             r
-                     r               r
-                     r c h .    kh   r
-                     rtttttttttttttttr
+BBBBBBBBBBBBBBBBBBBBBr               rBBBBBB
+BBBBBBBBBBBBBBBBBBBBBr..             rBBBBBB
+BBBBBBBBBBBBBBBBBBBBBr               rBBBBBB
+BBBBBBBBBBBBBBBBBBBBBr c h .    kh   rBBBBBB
+BBBBBBBBBBBBBBBBBBBBBrtttttttttttttttrBBBBBB

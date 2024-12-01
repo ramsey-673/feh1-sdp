@@ -1,25 +1,25 @@
 Thompson Library
 textures/thompson.png
-             llllllllllllll
-            l              l
-           l                l
-          l                  l
-         l     kh khckh kh     l
-        l     tttttttttttt  tttl
-        l            l         l
-        l               .      l
-        l   l          ..   .  l
-        l              .. khl  l
-        l            lttttttt tl
-        l                      l
-        l                      l
-        l            l    .    l
-        l            l.   .c   l
-        l            lt   tttt l
-        l                      l
-        l                l  llll
-        l                .     l
-        l            l kh.     l
+BBBBBBBBBBBBBlllllllllllllllBBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBBl               lBBBBBBBBBBBBBBBBBB
+BBBBBBBBBBBl                 lBBBBBBBBBBBBBBBBB
+BBBBBBBBBBl                   lBBBBBBBBBBBBBBBB
+BBBBBBBBBl     kh khckh kh     lBBBBBBBBBBBBBBB
+BBBBBBBBl     tttttttttttt  tttlBBBBBBBBBBBBBBB
+BBBBBBBBl            l         lBBBBBBBBBBBBBBB
+BBBBBBBBl               .      lBBBBBBBBBBBBBBB
+BBBBBBBBl   l          ..   .  lBBBBBBBBBBBBBBB
+BBBBBBBBl              .. khl  lBBBBBBBBBBBBBBB
+BBBBBBBBl            lttttttt tlBBBBBBBBBBBBBBB
+BBBBBBBBl                      lBBBBBBBBBBBBBBB
+BBBBBBBBl                      lBBBBBBBBBBBBBBB
+BBBBBBBBl            l    .    lBBBBBBBBBBBBBBB
+BBBBBBBBl            l.   .c   lBBBBBBBBBBBBBBB
+BBBBBBBBl            lt   tttt lBBBBBBBBBBBBBBB
+BBBBBBBBl                      lBBBBBBBBBBBBBBB
+BBBBBBBBl                l  llllBBBBBBBBBBBBBBB
+BBBBBBBBl                .     lBBBBBBBBBBBBBBB
+BBBBBBBBl            l kh.     lBBBBBBBBBBBBBBB
 llllllllll           ltttttt.  llllllllllllllll
 l       l            l         l      l       l
 l       l            l         .      .       l
@@ -31,10 +31,8 @@ l                                             l
 l                                             l
 l p                kh kh kh                   l
 lttttttttttttttttttttttttttt                  l
-                            t                 l
-                             t                l
-                              t               l
-                               t  kh kh kh  n l
-                                ttttttttttttttl
-
-
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBt                 l
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBt                l
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBt               l
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBt  kh kh kh  n l
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBttttttttttttttl

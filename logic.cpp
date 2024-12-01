@@ -391,7 +391,7 @@ Timer Game::gameTimer(5*1000*60);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/thompson.txt", "levels/mirror_lake.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
+std::vector<std::string> Game::levels = {"levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
 
 void Game::nextLevel()
 {
@@ -426,6 +426,8 @@ void Game::nextLevel()
 
 void Game::initialize() {
 
+    LCD.SetBackgroundColor(0xD3D3D3);
+
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");
     FEHImage *playerFlipped = new FEHImage("textures/food_robot_right.png");
 
@@ -459,11 +461,11 @@ void Game::initialize() {
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
-    Level *newLevel = new Level("levels/thompson.txt");
+    Level *newLevel = new Level("levels/union.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
-    LCD.SetBackgroundColor(0x89e0f0);
+    
 }
 
 void Game::update()
