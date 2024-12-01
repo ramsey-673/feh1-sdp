@@ -1,0 +1,40 @@
+Thompson Library
+textures/thompson.png
+             llllllllllllll
+            l              l
+           l                l
+          l                  l
+         l     kh khckh kh     l
+        l     tttttttttttt  tttl
+        l            l         l
+        l               .      l
+        l   l          ..   .  l
+        l              .. khl  l
+        l            lttttttt tl
+        l                      l
+        l                      l
+        l            l    .    l
+        l            l.   .c   l
+        l            lt   tttt l
+        l                      l
+        l                l  llll
+        l                .     l
+        l            l kh.     l
+llllllllll           ltttttt.  llllllllllllllll
+l       l            l         l      l       l
+l       l            l         .      .       l
+l                    l                        l
+l k k k     l        l kh  kh           k k kcl
+ltttttttttttl       llttttttttttt    tttttttttl
+l                                             l
+l                                             l
+l                                             l
+l p                kh kh kh                   l
+lttttttttttttttttttttttttttt                  l
+                            t                 l
+                             t                l
+                              t               l
+                               t  kh kh kh  n l
+                                ttttttttttttttl
+
+

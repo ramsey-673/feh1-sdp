@@ -391,7 +391,7 @@ Timer Game::gameTimer(5*1000*60);
 Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
-std::vector<std::string> Game::levels = {"levels/union.txt", "levels/mirror_lake.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
+std::vector<std::string> Game::levels = {"levels/thompson.txt", "levels/mirror_lake.txt", "levels/rpac.txt", "levels/morrill_tower.txt"};
 
 void Game::nextLevel()
 {
@@ -455,10 +455,11 @@ void Game::initialize() {
     Level::tileFileMap.insert({'I', "Ttextures/pillar_background.png"});
     Level::tileFileMap.insert({'.', "wtextures/spikes.png"});
     Level::tileFileMap.insert({',', "wtextures/acid.png"});
+    Level::tileFileMap.insert({'l', "ttextures/tan-brick.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");
-    Level *newLevel = new Level("levels/union.txt");
+    Level *newLevel = new Level("levels/thompson.txt");
     printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 
