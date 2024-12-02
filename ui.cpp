@@ -154,17 +154,8 @@ void UIManager::renderTimer()
 void UIManager::renderScore(int score)
 {
     // Generate output message.
-    std::string scoreMessage;
-    if (Game::currentLevel->dollarsLeft > 0)
-    {
-        scoreMessage = "Dollars Left: $" + std::to_string(Game::currentLevel->dollarsLeft);
-    }
-    else
-    {
-        scoreMessage = "Find the Scooter!";
-    }
+    std::string scoreMessage = "$" + std::to_string(score);
     
-
     // Draw score to screen.
     LCD.SetFontColor(SCORE_COLOR);
     LCD.WriteAt(scoreMessage, SCORE_X, SCORE_Y);
