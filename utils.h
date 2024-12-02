@@ -54,8 +54,6 @@ public:
     void Play();
 };
 
-
-
 /**
  * Simple (x, y) pair with overloaded math operators.
  */
