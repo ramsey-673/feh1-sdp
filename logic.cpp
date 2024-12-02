@@ -419,7 +419,7 @@ int Game::level = 0;
 
 std::vector<std::string> Game::levels = { "levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt" };
 
-int Game::bestMinutes { 5 };
+int Game::bestMinutes { 0 };
 
 int Game::bestSeconds { 0 };
 
@@ -586,8 +586,8 @@ void Game::writeScores(bool finished)
     if (finished)
     {
         // Player beat their best time: write the new high score
-        if (gameTimer.Minutes() < bestMinutes ||
-            gameTimer.Minutes() == bestMinutes && gameTimer.Seconds() < bestSeconds)
+        if (gameTimer.Minutes() > bestMinutes ||
+            gameTimer.Minutes() == bestMinutes && gameTimer.Seconds() > bestSeconds)
         {
             fprintf(playerData, "%d:%d\n", gameTimer.Minutes(), gameTimer.Seconds());
         }
