@@ -26,6 +26,9 @@
 #define JUMP_STRENGTH 8
 #define NUMBER_JUMPS 2
 
+#define SECOND_VALUE 10
+#define DOLLAR_VALUE 100
+
 // The player
 class Player
 {
@@ -265,6 +268,12 @@ public:
     // Value of gravity in the level
 	static Vector gravity;
 
+    // The player's statistics
+    static int bestMinutes;
+    static int bestSeconds;
+    static int money;
+    static int totalScore;
+
     /**
      * Proceeds to the next level.
      * 
@@ -277,6 +286,11 @@ public:
      * @author Nathan Ramsey
      */
     static void gameOver();
+    /*
+     * Reads/writes the player's scores.
+     */
+    static void loadScores();
+    static void writeScores(bool finished);
 
     // Used to keep track of current level.
     static int level;
