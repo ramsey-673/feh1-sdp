@@ -24,6 +24,9 @@ int main()
         // Reset main menu flag
         Game::mainMenu = false;
 
+        // Reload the player's scores from the data file
+        Game::loadScores();
+
         // Start with the main menu
         int option = menu();
 
@@ -134,9 +137,12 @@ int stats()
     LCD.Clear();
     LCD.WriteLine("< Back to Menu");
     LCD.WriteLine(" "); // Blank line
-    LCD.WriteLine("Score: 0");
-    LCD.WriteLine("Money Collected: $0");
-    LCD.WriteLine("Best Time: 0:00");
+    LCD.WriteLine("Money Collected: $" + std::to_string(Game::money));
+    if (Game::bestSeconds < 10)
+        LCD.WriteLine("Best Time: " + std::to_string(Game::bestMinutes) + ":0" + std::to_string(Game::bestSeconds));
+    else
+        LCD.WriteLine("Best Time: " + std::to_string(Game::bestMinutes) + ":" + std::to_string(Game::bestSeconds));
+    LCD.WriteLine("Total Score: " + std::to_string(Game::totalScore));
 
     // User input
     bool touched;

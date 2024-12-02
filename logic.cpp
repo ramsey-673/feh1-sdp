@@ -2,6 +2,8 @@
 #include "ui.h"
 #include "graphics.h"
 
+#include <stdio.h>
+
 
 
 /* Player */
@@ -417,18 +419,28 @@ int Game::level = 0;
 
 std::vector<std::string> Game::levels = { "levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt" };
 
+int Game::bestMinutes { 0 };
+
+int Game::bestSeconds { 0 };
+
+int Game::money { 0 };
+
+int Game::totalScore { 0 };
+
 void Game::nextLevel()
 {
+    // The game is over:
     if (Game::level >= Game::levels.size() - 1)
     {
-        // The game is over!
-
         // Write end screen.
         LCD.Clear();
         LCD.SetFontColor(WHITE);
         LCD.WriteLine("You win!");
         LCD.WriteLine("Time Left: " + Game::gameTimer.Display());
         LCD.Update();
+
+        // Write the player's scores.
+        writeScores(true);
 
         // Wait so player can read it.
         Sleep(3.0);
@@ -453,9 +465,19 @@ void Game::nextLevel()
 
 void Game::gameOver()
 {
+    // Display game over screen
+    LCD.Clear();
     LCD.SetFontColor(WHITE);
     LCD.WriteLine("Game Over.");
     LCD.WriteLine("Money Collected: $" + std::to_string(score));
+    LCD.Update();
+    // Stop so the player can read.
+    Sleep(3.0);
+    // Stop the game and return to the main menu.
+    running = false;
+    mainMenu = true;
+    // Write scores.
+    writeScores(false);
 }
 
 void Game::initialize()
@@ -508,12 +530,7 @@ void Game::update()
     // Quit the game if the timer runs out.
     if (gameTimer.Remaining() < 0)
     {
-        LCD.Clear();
         gameOver();
-        LCD.Update();
-        Sleep(3.0);
-        running = false;
-        mainMenu = true;
         return;
     }
 
@@ -525,6 +542,8 @@ void Game::update()
     {
         running = false;
         mainMenu = true;
+        // Write the player's scores to the file.
+        writeScores(false);
         // Reset score, input, and player velocity.
         score = 0;
         Player::v = { 0, 0 };
@@ -540,3 +559,52 @@ void Game::update()
 }
 
 void Game::cleanup() { }
+
+void Game::loadScores()
+{
+    FILE* playerData;
+    playerData = fopen("player_data.txt", "r");
+    if (playerData == NULL) return;
+    fscanf(playerData, "%d", &money);
+    fscanf(playerData, "%d:%d", &bestMinutes, &bestSeconds);
+    fscanf(playerData, "%d", &totalScore);
+    fclose(playerData);
+}
+
+void Game::writeScores(bool finished)
+{
+    // Open output file
+    FILE* playerData;
+    playerData = fopen("player_data.txt", "w");
+
+    // Total number of dollars player has collected
+    fprintf(playerData, "%d\n", money + score);
+
+    // If the player finished the game
+    if (finished)
+    {
+        // Player beat their best time: write the new high score
+        if (gameTimer.Minutes() < bestMinutes ||
+            gameTimer.Minutes() == bestMinutes && gameTimer.Seconds() < bestSeconds)
+        {
+            fprintf(playerData, "%d:%d\n", gameTimer.Minutes(), gameTimer.Seconds());
+        }
+        // Didn't beat their best time, write the old record instead
+        else
+        {
+            fprintf(playerData, "%d:%d\n", bestMinutes, bestSeconds);
+        }
+        // Update the score, giving points for seconds left when finishing the game
+        fprintf(playerData, "%d\n", totalScore + gameTimer.Remaining() * SECOND_VALUE + score * DOLLAR_VALUE);
+    }
+    // Player didn't finish the game
+    else
+    {
+        // The player can't have beaten their time if they didn't finish
+        fprintf(playerData, "%d:%d\n", bestMinutes, bestSeconds);
+        // Update score, but only count the money the player collected
+        fprintf(playerData, "%d\n", totalScore + score * DOLLAR_VALUE);
+    }
+
+    fclose(playerData);
+}
