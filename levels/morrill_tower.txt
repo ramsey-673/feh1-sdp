@@ -1,5 +1,5 @@
 Morrill Tower
-textures/morrill_tower_background.png
+textures/morrill_tower.png
 ssssssssssssssssssssssssssssssss
 s                         s    s
 s    SSSSSSSSSSSSSSS SSSSSs    s
