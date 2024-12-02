@@ -102,7 +102,7 @@ Level::Level(const std::string &fileName)
         // Write level name to screen
         LCD.Clear();
         LCD.SetFontColor(WHITE);
-        LCD.WriteAt(levelName, PROTEUS_WIDTH / 2, PROTEUS_HEIGHT / 2);
+        LCD.WriteAt(levelName, 0, PROTEUS_HEIGHT / 2);
         LCD.Update();
 
         // Set level background.
@@ -447,6 +447,7 @@ void Game::nextLevel()
 
         // Close game instance.
         running = false;
+        mainMenu = true;
     }
     else
     {
@@ -516,6 +517,7 @@ void Game::initialize()
     Level::tileFileMap.insert({'.', "wtextures/spikes.png"});
     Level::tileFileMap.insert({',', "wtextures/acid.png"});
     Level::tileFileMap.insert({'l', "ttextures/tan-brick.png"});
+    Level::tileFileMap.insert({'C', "ntextures/customer.png"});
     printf("LOADED TILEFILEMAP\n");
 
     printf("LOADING LEVEL\n");

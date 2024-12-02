@@ -10,7 +10,7 @@ s    s     s  s      s  s s    s
 s    sSSSSSsS ssssss sS s s    s
 s    s        s      s  s s    s
 s    s  SSSSSSs  SSSSs  sSs    s
-s n  s                         s
+s C  s                         s
 sSSSSsSSSSSSSSSSSSSSSSSSSSS    s
 s         s   s   s   s        s
 s         s   s   s   s        s
@@ -39,7 +39,7 @@ s       s.      s.             s
 s       s.   .  s.   .        .s
 s       s.   s  s.   s        .s
 s            s       s        .s
-sSSSSSSSSSSSSSSSSSSSSSSSSS    .s
+sSSSSSSSSSSSSsSSSSSSSsSSSS    .s
 s                       s.    .s
 s                       s.    .s
 s                       s.  S .s
