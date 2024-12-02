@@ -417,9 +417,9 @@ Vector Game::gravity { GRAVITY_X, GRAVITY_Y };
 
 int Game::level = 0;
 
-std::vector<std::string> Game::levels = { "levels/union.txt", "levels/mirror_lake.txt", "levels/thompson.txt", "levels/rpac.txt", "levels/morrill_tower.txt" };
+std::vector<std::string> Game::levels = { "levels/union.txt" };
 
-int Game::bestMinutes { 0 };
+int Game::bestMinutes { 5 };
 
 int Game::bestSeconds { 0 };
 
