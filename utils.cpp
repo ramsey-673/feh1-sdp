@@ -4,8 +4,6 @@
 #include <string>
 #include <time.h>
 
-
-
 /* Timer */
 
 Timer::Timer(double duration)
@@ -51,8 +49,6 @@ void Timer::Play()
 {
     stopTime += time(NULL) - pauseTime;
 }
-
-
 
 /* Vector */
 

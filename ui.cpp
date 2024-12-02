@@ -2,6 +2,8 @@
 #include "logic.h"
 #include "utils.h"
 
+/* InputHandler */
+
 bool InputHandler::previousState = false;
 Vector InputHandler::touchOrigin = {-1, -1};
 Vector InputHandler::smallCircle = {-1, -1};
@@ -124,6 +126,8 @@ void InputHandler::ClearInput()
     previousState = false;
     touchOrigin = { -1, -1 };
 }
+
+/* UIManager */
 
 void UIManager::renderUI()
 {
