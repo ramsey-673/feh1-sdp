@@ -2,48 +2,48 @@ Morrill Tower
 textures/morrill_tower.png
 ssssssssssssssssssssssssssssssss
 s                         s    s
-s    sssssssssssssss ssssss    s
+s    SSSSSSSSSSSSSSS SSSSSs    s
 s    s   s    s      s    s    s
-s    s s s s  s    s s    s    s
-s    s sss s sssssss s ss s    s
+s    s S s S  s    S s    s    s
+s    s sSs s SsSSSSs s SS s    s
 s    s     s  s      s  s s    s
-s    ssssssss ssssss ss s s    s
+s    sSSSSSsS ssssss sS s s    s
 s    s        s      s  s s    s
-s    s  sssssss  sssss  sss    s
+s    s  SSSSSSs  SSSSs  sSs    s
 s n  s                         s
-sssssssssssssssssssssssssss    s
+sSSSSsSSSSSSSSSSSSSSSSSSSSS    s
 s         s   s   s   s        s
 s         s   s   s   s        s
 s         s   s   s   s      s s
 s                              s
-s         s   s   s   s        s
+s         S   S   S   S        s
 s         s,,,s,,,s,,,s        s
-s    sssssssssssssssssssssssssss
+s    SSSSSsssssssssssssSSSSSSSSs
 s               s      .       s
 s               .              s
-s  s                           s
+s  S                           s
 s        .                     s
 s        s             .       s
 s        s      .      s       s
-ssssssssssssssssssssssssss.    s
+sSSSSSSSSsSSSSSSSSSSSSSsSS.    s
 s                              s
-s                            s s
+s                            S s
 s                              s
 s                              s
-s           ss    ss    ss     s
-s      ss,,,,,,,,,,,,,,,,,,,,,,s
+s           SS    SS    SS     s
+s      SS,,,ss,,,,ss,,,,ss,,,,,s
 s      sssssssssssssssssssssssss
 s       s.      s.             s
-s  s    s.      s.             s
+s  S    s.      s.             s
 s       s.      s.             s
 s       s.   .  s.   .        .s
 s       s.   s  s.   s        .s
 s            s       s        .s
-ssssssssssssssssssssssssss    .s
-s                        .    .s
-s                        .    .s
-s                        .  s .s
-s                        .    .s
-s                        .    .s
+sSSSSSSSSSSSSSSSSSSSSSSSSS    .s
+s                       s.    .s
+s                       s.    .s
+s                       s.  S .s
+s                       s.    .s
+s                       s.    .s
 s  p                           s
-ssssssssssssssssssssssssssssssss
+sSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs
