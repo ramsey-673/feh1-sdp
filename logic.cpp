@@ -586,8 +586,8 @@ void Game::writeScores(bool finished)
     if (finished)
     {
         // Player beat their best time: write the new high score
-        if (gameTimer.Minutes() < bestMinutes ||
-            gameTimer.Minutes() == bestMinutes && gameTimer.Seconds() < bestSeconds)
+        if (gameTimer.Minutes() > bestMinutes ||
+            gameTimer.Minutes() == bestMinutes && gameTimer.Seconds() > bestSeconds)
         {
             fprintf(playerData, "%d:%d\n", gameTimer.Minutes(), gameTimer.Seconds());
         }
