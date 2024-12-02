@@ -44,6 +44,9 @@ int stats();
 int tutorial();
 int credits();
 
+/**
+ * Handles the in-game UI.
+ */
 class UIManager {
 private:
     /**
@@ -75,8 +78,9 @@ public:
 };
 
 
-
-// Handes user input
+/**
+ * Handles in-game user input.
+ */
 class InputHandler {
 private:
     /**

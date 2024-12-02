@@ -1,33 +1,25 @@
-/**
- * TODO:
- * 1. Create levels
- *  a. Create end screen
- * 2. Create exit to main menu
- *  a. Pause menu (optional and very hard)
- * 3. Implement UI
- *  a. Allow player to return to main menu.
- * 4. Save data (easy)
- * 5. Create rendering pipeline
- * 6. Make project non-static
- */
-
 #include "logic.h"
 #include "ui.h"
 
 #include "FEHLCD.h"
 #include "FEHImages.h"
 
+/**
+ * Runs when the game opens.
+ * Handles navigation between menues
+ * and starts up the game.
+ */
 int main()
 {
     while (true)
     {
-        // Reset main menu flag
+        // Reset the main menu flag.
         Game::mainMenu = false;
 
-        // Reload the player's scores from the data file
+        // Reload the player's scores from the data file.
         Game::loadScores();
 
-        // Start with the main menu
+        // Start with the main menu.
         int option = menu();
 
         // Exit condition:
@@ -51,6 +43,7 @@ int main()
             }
         }
 
+        // Start up the game.
         Game::initialize();
         Game::running = true;
         while(Game::running)
@@ -60,15 +53,16 @@ int main()
 
         Game::cleanup();
 
-        // Don't quit game if the player wants to go back to the menu
+        // Don't quit game if the player wants to go back to the menu.
         if (!Game::mainMenu) break;
     }
 }
 
-
-
 /* Menu functions */
 
+/**
+ * Display the main menu and gets user input.
+ */
 int menu()
 {
     // Display code
@@ -131,6 +125,9 @@ int menu()
     }
 }
 
+/**
+ * Opens the stats menu.
+ */
 int stats()
 {
     // Display statistics to the screen
@@ -149,7 +146,7 @@ int stats()
     float x;
     float y;
 
-    // Wait until back button is pressed
+    // Wait until back button is pressed.
     while (true)
     {
         x = 0;
@@ -166,6 +163,9 @@ int stats()
     }
 }
 
+/**
+ * Opens the tutorial menu.
+ */
 int tutorial()
 {
     // Tutorial text.
@@ -184,6 +184,8 @@ int tutorial()
     bool touched;
     float x;
     float y;
+
+    // Wait until back button is pressed.
     while (true)
     {
         x = 0;
@@ -200,6 +202,9 @@ int tutorial()
     }
 }
 
+/**
+ * Opens the credits menu.
+ */
 int credits()
 {
     // Credits display
@@ -218,7 +223,7 @@ int credits()
     float x;
     float y;
 
-    // Wait until user decides to go back to menu
+    // Wait until user decides to go back to menu.
     while (true)
     {
         x = 0;

@@ -2,15 +2,20 @@
 
 #include <string>
 
-
-
 /**
  * Game timer.
  */
 class Timer
 {
 private:
+    /**
+     * Indicates when the timer elapses.
+     */
     double stopTime;
+    /**
+     * Used to ensure that the timer does not progress
+     * while the game is paused.
+     */
     double pauseTime;
 
 public:
@@ -51,11 +56,15 @@ public:
 
 
 
-// Simple (x, y) pair with overloaded math operators
+/**
+ * Simple (x, y) pair with overloaded math operators.
+ */
 class Vector
 {
 public:
-    // Pair of coordinates or measurements
+    /**
+     * Pair of coordinates or measurements
+     */
     float x;
     float y;
 

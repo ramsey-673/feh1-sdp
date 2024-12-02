@@ -3,7 +3,6 @@
 #include "utils.h"
 #include "FEHImages.h"
 
-
 /**
  * Handles the relationship between game position and screen position.
  */

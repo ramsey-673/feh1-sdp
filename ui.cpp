@@ -70,9 +70,7 @@ void InputHandler::processInput()
             }
         }
 
-        /* Draw input UI */
-
-        
+        /* Calculate values for input UI */        
 
         // Calculate the position of the inner circle,
         // which is at the player's touch location if its within the outer circle
@@ -83,6 +81,8 @@ void InputHandler::processInput()
         // Allow Graphics::render() to render the circles.
         InputHandler::smallCircle.x = innerCircleOrigin.x;
         InputHandler::smallCircle.y = innerCircleOrigin.y;
+
+        /* Calculate changes to player movment. */
 
         // Calculate player's x movement as a real scalar from [-1, 1].
         float playerMovementX = (float)touchOriginOffset.x / OUTER_CIRCLE_RADIUS;

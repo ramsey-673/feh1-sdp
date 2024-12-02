@@ -3,11 +3,11 @@
 #include "ui.h"
 #include <cmath>
 
-
 #define PROTEUS_WIDTH 319
 #define PROTEUS_HEIGHT 239
 #define DEFAULT_SPRITE_SIZE 16
 
+/* Camera */
 
 Vector Camera::origin = {0, 0};
 
@@ -75,36 +75,30 @@ void Camera::follow(const Vector &targetPosition)
     Camera::follow(targetPosition, DEFAULT_SPRITE_SIZE, DEFAULT_SPRITE_SIZE);
 }
 
+/* Graphics */
+
 FEHImage *Graphics::background;
 
 void Graphics::render()
 {
     // Ensure the camera stays centered on the player
     // during this rendering cycle.
-    // printf("MOVING TO PLAYER\n");
     Camera::follow(Player::position);
 
     Graphics::background->Draw(0, 0);
 
-
-    // printf("RENDERING TILES\n");
     // Iterate through every tile in the level.
     for (const Tile *tile : Game::currentLevel->tiles)
     {
-        // printf("GETTING SCREEN POSITION FOR TILE\n");
         // Find the screen position of the current tile.
         Vector screenPosition = Camera::getScreenPosition(tile->position);
 
-        // printf("CHECKING IF TILE IS IN FRAME\n");
         // Render the tile if the camera can see it.
         if (Camera::isInFrame(screenPosition, tile->size.x, tile->size.y)) {
-            // printf("RENDERING TILE\n");
             tile->render(screenPosition);
-            // printf("RENDERED TILE\n");
         }
     }
 
-    // printf("RENDERING COLLECTIBLES\n");
     // Iterate through every collectible in the level.
     for (const Collectible *collectible : Game::currentLevel->collectibles)
     {
@@ -120,7 +114,6 @@ void Graphics::render()
         }
     }
 
-    // printf("RENDERING PLAYER\n");
     // Find the screen position of the player.
     Vector screenPosition = Camera::getScreenPosition(Player::position);
 
@@ -134,7 +127,6 @@ void Graphics::render()
     if (InputHandler::touchOrigin.x != -1)
     {
         // Draw the outer circle.
-
         LCD.SetFontColor(OUTER_CIRCLE_COLOR);
         LCD.DrawCircle(InputHandler::touchOrigin.x, InputHandler::touchOrigin.y, OUTER_CIRCLE_RADIUS);
 

@@ -5,16 +5,16 @@
 #include "FEHUtility.h"
 #include "utils.h"
 
-#define PROTEUS_WIDTH 319
-#define PROTEUS_HEIGHT 239
-#define DEFAULT_SPRITE_SIZE 16
-
 #include <fstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <cmath>
 #include <fstream>
+
+#define PROTEUS_WIDTH 319
+#define PROTEUS_HEIGHT 239
+#define DEFAULT_SPRITE_SIZE 16
 
 #define GRID_CELL_WIDTH 16
 #define GRID_CELL_HEIGHT 16
@@ -29,15 +29,23 @@
 #define SECOND_VALUE 100
 #define DOLLAR_VALUE 10
 
-// The player
+/**
+ * Represents the player.
+ */
 class Player
 {
 public:
-    // Player's absolute position
+    /**
+     * The player's in-game position.
+     */
 	static Vector position;
-    // Size of player's hitbox
+    /**
+     * The size of the player's hitbox.
+     */
 	static Vector size;
-    // The player's current velocity; change in position per frame
+    /**
+     * The player's current velocity, change in position per frame.
+     */
 	static Vector v;
 
     /**
@@ -46,15 +54,17 @@ public:
      */
     static int jumpCounter;
 
-    // Texture associated with the player
+    /**
+     * The player's non-inverted texture.
+     */
     static FEHImage *texture;
     /**
-     * Reversed player texture.
+     * The player's inverted texture.
      */
     static FEHImage *flipTexture;
 
     /**
-     * Renders this.
+     * Renders the player.
      * 
      * @param screenPosition
      *      the screen position of this
@@ -64,22 +74,40 @@ public:
 	static void render(Vector screenPosition);
 };
 
-// An item that the player can pick up.
+/**
+ * Represents a collectible,
+ * which is a tile that the player can pass though
+ * and can typically interact with.
+ */
 class Collectible
 {
 private:
     FEHImage *texture;
 public:
-    // Collectible's absolute position in the level
+    /**
+     * The collectible's in-game position.
+     */
 	Vector position;
-    // Size of collectible's hitbox
+    /**
+     * The size of the collectible's hitbox.
+     */
 	Vector size;
-    // Whether or not the collectible has been picked up.
+    /**
+     * Indicates whether or not the collectible has been picked up.
+     * If true, the collectible is no longer rendered,
+     * and the player can no longer interact with it.
+     */
     bool collected;
 
-    // Type of the collectible.
-    // 'd' represents a dollar,
-    // and 's' represents a scooter.
+    /**
+     * Indicates the functionality of the collectible.
+     * A value of 'd' represents a dollar,
+     * a value of 's' indicates the collectible
+     * will take the player to the next level
+     * if all dollars are collected,
+     * and a value of 't' or any other undefined value
+     * indicates no special functionality.
+     */
     char type;
 
     /**
@@ -109,19 +137,41 @@ public:
     void render(Vector screenPosition) const;
 };
 
-// Building blocks of the level.
+/**
+ * Represents a game object
+ * that the player cannot pass though
+ * or interact with.
+ */
 class Tile
 {
 private:
     FEHImage *texture;
 public:
-    // Absolute position in the level
+    /**
+     * The tile's in-game position.
+     */
 	Vector position;
-    // Hitbox size
+    /**
+     * The size of the tile's hitbox.
+     */
 	Vector size;
-    // If true, player dies on contact
+    /**
+     * If set to true, the player dies on contact.
+     */
     bool deadly;
 	
+    /**
+     * Constructor for a tile.
+     * 
+     * @param position
+     *      the in-game position of this
+     * @param size
+     *      the size of this in pixels
+     * @param texture
+     *      the FEHImage used to render this
+     * 
+     * @author Andrew Loznianu
+     */
 	Tile(Vector position, Vector size, FEHImage *texture);
 
     /**
@@ -135,30 +185,49 @@ public:
 	void render(Vector screenPosition) const;
 };
 
-// Contains all the data for each level.
+/**
+ * Represents the current level.
+ */
 class Level
 {
 public:
-    // Dollars required to proceed to the next level.
+    /**
+     * The number of dollars to be collected
+     * to proceed to the next level.
+     * Passage to the next level is allowed
+     * if the value is zero.
+     */
     int dollarsLeft;
-    // Contains every tile in the current level.
+    /**
+     * Contains every tile in the current level.
+     */
 	std::vector<Tile*> tiles;
-    // Contains every collectible in the current level.
+    /**
+     * Contains every collectible in the current level.
+     */
 	std::vector<Collectible*> collectibles;
-    // The player's starting position for the current level.
+    /**
+     * The player's starting position for the current level.
+     */
     Vector startingPosition;
 
-    // Stores the bottom-right corner of the play area.
-    // The upper-left corner is always (0, 0)
+    /**
+     * Stores the bottom-right corner of the play area.
+     * The upper-left corner is always (0, 0)
+     */
     Vector playLimit;
 
 
-    // Maps characters from input files to the corresponding game object to create.
+    /**
+     * Maps characters from input files to the corresponding game object to create.
+     * Game object types are serialized as a char representing its functionality
+     * followed by the relative path to the game object's texture.
+     */
 	static std::unordered_map<char, const char*> tileFileMap;
 
     /**
      * A hashmap that maps texture filenames
-     * to the texture's memory location - an FEHImage.
+     * to the texture's memory location, an FEHImage.
      */
     static std::unordered_map<const char*, FEHImage*> fileTextureMap;
 
@@ -216,7 +285,9 @@ public:
 	static bool checkCollision(Collectible &collectible);
 };
 
-// Manipulates game logic
+/**
+ * Handles the game logic.
+ */
 class Logic
 {
 public:
@@ -230,16 +301,26 @@ public:
 
 
 
-// Contains the game's overall state
+/**
+ * Represents the game's overall state.
+ */
 class Game
 {
 public:
-    // Number of collectibles the player has picked up.
+    /**
+     * Number of dollars the player has picked up.
+     * Not to be confused with the player's overall score.
+     */
 	static int score;
 
-    // True if the game is updating.
+    /**
+     * True if the game is updating.
+     * Is set to false if the game is done running.
+     */
 	static bool running;
-    // True if the player opts to go back to the main menu.
+    /**
+     * True if the player opts to go back to the main menu.
+     */
     static bool mainMenu;
     /**
      * Initializes the game.
@@ -260,15 +341,24 @@ public:
      */
 	static void cleanup();
 
-    // The level currently loaded + displayed to the player
+    /**
+     * The level currently loaded into memory.
+     */
 	static Level *currentLevel;
-    // Timer that will end the game if it runs out
+    /**
+     * Timer that indicates how much time the player has left in the game.
+     */
 	static Timer gameTimer;
 
-    // Value of gravity in the level
+    /**
+     * Value of gravity in the level.
+     */
 	static Vector gravity;
 
-    // The player's statistics
+    /**
+     * The player's statistics, which will be saved in persistent memory
+     * and will be displayed to the player in the Stats menu.
+     */
     static int bestMinutes;
     static int bestSeconds;
     static int money;
@@ -292,8 +382,15 @@ public:
     static void loadScores();
     static void writeScores(bool finished);
 
-    // Used to keep track of current level.
+    /**
+     * Keeps track of the current level number.
+     * Used to determine the next level.
+     */
     static int level;
-    // Keeps track of levels in order.
+    /**
+     * Keeps track of the game's levels in order.
+     * Each level is represented as a path to a text file,
+     * which the Level class constructor will translate.
+     */
     static std::vector<std::string> levels;
 };

@@ -4,8 +4,6 @@
 
 #include <stdio.h>
 
-
-
 /* Player */
 
 FEHImage *Player::texture;
@@ -22,18 +20,20 @@ int Player::jumpCounter = 0;
 
 void Player::render(Vector screenPosition)
 {
-    // Just draw a blue rectangle
+    // If the player is moving right,
+    // render the flipped player texture instead.
     if (Player::v.x <= 0)
     {
+        // Draw the player's non-inverted sprite.
         Player::texture->Draw(screenPosition.x, screenPosition.y);
-    } else
+    }
+    else
     {
+        // Draw the player's inverted sprite.
         Player::flipTexture->Draw(screenPosition.x, screenPosition.y);
     }
 	
 }
-
-
 
 /* Collectible */
 
@@ -41,29 +41,20 @@ Collectible::Collectible(Vector position, Vector size, FEHImage *texture, char t
 
 void Collectible::render(Vector screenPosition) const
 {
+    // Draw the collectible's sprite.
     this->texture->Draw(screenPosition.x, screenPosition.y);
 }
-
 
 
 /* Tile */
 
 Tile::Tile(Vector position, Vector size, FEHImage *texture): position(position), size(size), texture(texture) { }
 
-// TEMPORARY GRAPHICS CODE
 void Tile::render(Vector screenPosition) const
 {
-
-    // if (this->texture == NULL) {
-    //     printf("This is null\n");
-    // }
-    // Draw a white rectangle
-    // printf("DRAWING tile at (%f, %f)\n", screenPosition.x, screenPosition.y);
+    // Draw the tile's sprite.
 	this->texture->Draw(screenPosition.x, screenPosition.y);
-    // printf("Finished drawing tile\n");
 }
-
-
 
 /* Level */
 
@@ -75,7 +66,8 @@ Level::Level() { }
 
 Level::Level(const std::string &fileName)
 {
-    // Used to show waiting screen.
+    // Used to show the waiting screen
+    // for a specified amount of time.
     float startTime = TimeNow();
 
     // Open the current level's file.
@@ -88,6 +80,7 @@ Level::Level(const std::string &fileName)
     // Check if the file opened successfully.
     if (!fileStream.is_open())
     {
+        printf("ERROR: File cannot be found!\n");
         throw 404;
     }
     else
@@ -114,7 +107,8 @@ Level::Level(const std::string &fileName)
         char objectChar = fileStream.get();
 
         // Used to set the play area.
-        int maxX = 0;
+        int maxCol = 0;
+
         while(!fileStream.eof())
         {
             while (objectChar != '\n')
@@ -134,8 +128,6 @@ Level::Level(const std::string &fileName)
                 gridPosition.x = col * GRID_CELL_WIDTH;
                 gridPosition.y = row * GRID_CELL_HEIGHT;
 
-                printf("LOADING %c to (%f, %f)\n", objectChar, gridPosition.x, gridPosition.y);
-
                 // Get the object type and texture path from
                 // the char -> filePath HashMap.
                 const char *fileName = Level::tileFileMap.at(objectChar);
@@ -147,7 +139,6 @@ Level::Level(const std::string &fileName)
                 // Check if the texture is not already loaded into memory.
                 if (Level::fileTextureMap.find(fileName) == Level::fileTextureMap.end())
                 {
-                    // printf("ADDING TEXTURE TO FILE TEXTURE MAP\n");
                     // Lead the texture into memory,
                     FEHImage *newTexture = new FEHImage();
                     newTexture->Open(fileName);
@@ -166,7 +157,6 @@ Level::Level(const std::string &fileName)
                     Player::position.x = gridPosition.x;
                     Player::position.y = gridPosition.y;
                     this->startingPosition = gridPosition;
-                    //Player::texture = texture;
                 }
                 else if (type == 't')
                 {
@@ -180,7 +170,7 @@ Level::Level(const std::string &fileName)
                 }
                 else if (type == 'w')
                 {
-                    // Create a new water tile.
+                    // Create a new dangrous tile.
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
@@ -201,7 +191,7 @@ Level::Level(const std::string &fileName)
                 }
                 else if (type == 'T')
                 {
-                    // Create a transparent tile.
+                    // Create a tile the player can pass through.
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT;
@@ -220,7 +210,7 @@ Level::Level(const std::string &fileName)
                 }
                 else if (type == 'n')
                 {
-                    // Create a new scooter.
+                    // Create a new next level object.
                     Vector size;
                     size.x = GRID_CELL_WIDTH;
                     size.y = GRID_CELL_HEIGHT - 5;
@@ -229,13 +219,16 @@ Level::Level(const std::string &fileName)
                     this->collectibles.push_back(newCollectible);
                 }
 
-                maxX = std::fmax(maxX, gridPosition.x);
+                // Update the largest column.
+                maxCol = std::fmax(maxCol, gridPosition.x);
                 // Get the next character.
                 objectChar = fileStream.get();
                 // Increment column.
                 col++;
             }
             
+            // The translator is in a new row,
+            // so reset the current column.
             col = 0;
             // Increment row.
             row++;
@@ -243,13 +236,14 @@ Level::Level(const std::string &fileName)
         }
 
         // Set the current level's bottom-right corner.
-        this->playLimit = {(float)(maxX) + GRID_CELL_WIDTH - 2, (float)(row) * GRID_CELL_HEIGHT - 1};
+        this->playLimit = {(float)(maxCol) + GRID_CELL_WIDTH - 2, (float)(row) * GRID_CELL_HEIGHT - 1};
 
         // Close the file.
         fileStream.close();
     }
 
     // Wait until at least three seconds have passed
+    // since the level has started loading
     // for the player to read the loading screen.
     // Pause the timer while this is happening.
     Game::gameTimer.Pause();
@@ -278,16 +272,13 @@ void Level::restart()
     // Resets the player's velocity.
     Player::v.x = 0;
     Player::v.y = 0;
-
 }
-
-
 
 /* Physics */
 
 void Physics::applyGravity()
 {
-    // Change the player's velocity to simulate gravity
+    // Change the player's velocity to simulate gravity.
 	Player::v += Game::gravity;
 }
 
@@ -322,9 +313,12 @@ bool Physics::checkCollision(Tile &tile)
                     else
                         Player::v.x = 0;
                 }
+
                 Player::v.y = 0;
                 Player::position.y = tile.position.y - Player::size.y;
 
+                // Reset the player's available jumps
+                // since they touched thr ground.
                 Player::jumpCounter = NUMBER_JUMPS;
             }
             // Top of the player hits the bottom of the tile
@@ -369,14 +363,18 @@ bool Physics::checkCollision(Collectible &collectible)
         Player::position.y + Player::size.y > collectible.position.y &&
         Player::position.y < collectible.position.y + collectible.size.y)
     {
+        // Check for the collectible's functionality type.
         if (collectible.type == 'd' && !collectible.collected)
         {
+            // The collectible is a dollar.
             Game::score++;
             Game::currentLevel->dollarsLeft--;
             collectible.collected = true;
         }
         else if (collectible.type == 's' && Game::currentLevel->dollarsLeft <= 0)
         {
+            // The collectible is a next level object
+            // and the player has collected all the dollars.
             Game::nextLevel();
         }
     }
@@ -385,17 +383,22 @@ bool Physics::checkCollision(Collectible &collectible)
 void Logic::updateLogic()
 {
     Physics::applyGravity();
+
     InputHandler::processInput();
+
     for (auto i = 0; i < Game::currentLevel->tiles.size(); i++)
         Physics::checkCollision(*Game::currentLevel->tiles[i]);
     for (auto i = 0; i < Game::currentLevel->collectibles.size(); i++)
         Physics::checkCollision(*Game::currentLevel->collectibles[i]);
+    
 	Player::position += Player::v;
 
+    // Check if the player is out of bounds.
+    // 2000 is an arbitrary value that may be changed later.
     if (Player::position.y > 2000)
     {
-        printf("ERROR: Player is out of bounds!");
-        Game::running = false;
+        printf("ERROR: Player is out of bounds!\n");
+        throw 125;
     }
 }
 
@@ -483,17 +486,20 @@ void Game::gameOver()
 
 void Game::initialize()
 {
-    
+    // Initialize the game's timer.
     gameTimer.SetTimer(5*60);
+
+    // Initialize the background color.
     LCD.SetBackgroundColor(BLACK);
 
+    // Initialize the player's textures.
     FEHImage *playerNormal = new FEHImage("textures/food_robot.png");
     FEHImage *playerFlipped = new FEHImage("textures/food_robot_right.png");
 
     Player::texture = playerNormal;
     Player::flipTexture = playerFlipped;
 
-    printf("INITIALIZING GAME\n");
+    // Initilize the tileFileMap.
     Level::tileFileMap.insert({'p', "ptextures/food_robot.png"});
     Level::tileFileMap.insert({'d', "ttextures/dirt.png"});
     Level::tileFileMap.insert({'g', "ttextures/grass.png"});
@@ -518,12 +524,11 @@ void Game::initialize()
     Level::tileFileMap.insert({',', "wtextures/acid.png"});
     Level::tileFileMap.insert({'l', "ttextures/tan-brick.png"});
     Level::tileFileMap.insert({'C', "ntextures/customer.png"});
-    printf("LOADED TILEFILEMAP\n");
 
-    printf("LOADING LEVEL\n");
+    // Initialize the current level.
     Game::level = 0;
+
     Level *newLevel = new Level("levels/union.txt");
-    printf("LOADED LEVEL\n");
     Game::currentLevel = newLevel;
 }
 
@@ -553,20 +558,27 @@ void Game::update()
         return;
     }
     
+    // Render graphics.
     LCD.Clear();
     Graphics::render();
     UIManager::renderUI();
-
     LCD.Update();
 }
 
-void Game::cleanup() { }
+void Game::cleanup() {
+    // Empty for now.
+}
 
 void Game::loadScores()
 {
+    // Open the player data file.
     FILE* playerData;
     playerData = fopen("player_data.txt", "r");
+
+    // Check if the file exists.
     if (playerData == NULL) return;
+
+    // Read the player's data into memory.
     fscanf(playerData, "%d", &money);
     fscanf(playerData, "%d:%d", &bestMinutes, &bestSeconds);
     fscanf(playerData, "%d", &totalScore);
