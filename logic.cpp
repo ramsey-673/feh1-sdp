@@ -271,8 +271,12 @@ Level::~Level()
 
 void Level::restart()
 {
-    // For now, this only resets the player's position.
+    // Resets the player's starting position.
     Player::position = this->startingPosition;
+    // Resets the player's velocity.
+    Player::v.x = 0;
+    Player::v.y = 0;
+
 }
 
 

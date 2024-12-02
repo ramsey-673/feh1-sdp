@@ -6,7 +6,6 @@
 
 /**
  * Handles the relationship between game position and screen position.
- * Essentially functions as the game's "camera."
  */
 class Camera
 {
@@ -24,6 +23,8 @@ public:
      * @param &gamePosition
      *      game position to convert to screen position
      * @returns screen position of parameter based on camera
+     * 
+     * @author Andrew Loznianu
      */
     static Vector getScreenPosition(const Vector &gamePosition);
 
@@ -38,6 +39,8 @@ public:
      * @param spriteHeight
      *      the height of the game object's sprite
      * @returns whether the sprite object is on the screen
+     * 
+     * @author Andrew Loznianu
      */
     static bool isInFrame(const Vector &screenPosition, const int spriteWidth, const int spriteHeight);
     static bool isInFrame(const Vector &screenPosition);
@@ -52,6 +55,8 @@ public:
     *       the width of the game object to follow's sprite
     * @param spriteHeight
     *       the height of the game object to follow's sprite
+    * 
+    * @author Andrew Loznianu
     */
     static void follow(const Vector &targetPosition, const int spriteWidth, const int spriteHeight);
     static void follow(const Vector &targetPosition);
@@ -64,13 +69,16 @@ public:
  */
 class Graphics
 {
-private:
-    // Maps a filename to a texture object.
 public:
     /**
      * Iterate through every game object and render them to the screen.
+     * 
+     * @author Andrew Loznianu
      */
     static void render();
 
+    /**
+     * Used to render the background image of the current level.
+     */
     static FEHImage *background;
 };

@@ -51,6 +51,8 @@ private:
      * 
      * @param timeLeft
      *      the current value of the timer
+     * 
+     * @author Andrew Loznianu
      */
     static void renderTimer();
     /**
@@ -58,12 +60,16 @@ private:
      * 
      * @param score
      *      the current value of score
+     * 
+     * @author Andrew Loznianu
      */
     static void renderScore(int score);
 public:
     /**
      * Draws the game's gameplay UI to the screen
      * excluding player input UI.
+     * 
+     * @author Andrew Loznianu
      */
     static void renderUI();
 };
@@ -82,6 +88,8 @@ private:
 public:
     /**
      * Updates the game's state based on user's input on the current frame.
+     * 
+     * @author Andrew Loznianu
      */
     static void processInput();
     /**
@@ -91,8 +99,10 @@ public:
     static Vector touchOrigin;
     static Vector smallCircle;
 
-    /*
+    /**
      * Clears input and the previous state.
+     * 
+     * @author Nathan Ramsey
      */
     static void ClearInput();
 };

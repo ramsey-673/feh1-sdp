@@ -37,14 +37,26 @@ public:
     // The player's current velocity; change in position per frame
 	static Vector v;
 
+    /**
+     * Used to keep track of how many jumps the player has left
+     * before they need to touch the ground.
+     */
     static int jumpCounter;
 
     // Texture associated with the player
     static FEHImage *texture;
+    /**
+     * Reversed player texture.
+     */
     static FEHImage *flipTexture;
 
-    /*
-     * TEMPORARY GRAPHICS CODE
+    /**
+     * Renders this.
+     * 
+     * @param screenPosition
+     *      the screen position of this
+     * 
+     * @author Andrew Loznianu
      */
 	static void render(Vector screenPosition);
 };
@@ -67,8 +79,30 @@ public:
     // and 's' represents a scooter.
     char type;
 
+    /**
+     * Constructor for a collectible object.
+     * 
+     * @param position
+     *      the in-game position of this
+     * @param size
+     *      the size of this in pixels
+     * @param texture
+     *      the FEHImage used to render this
+     * @param type
+     *      used to determine functionality of collectible by game logic methods
+     * 
+     * @author Andrew Loznianu
+     */
 	Collectible(Vector position, Vector size, FEHImage *texture, char type);
 
+    /**
+     * Renders this.
+     * 
+     * @param screenPosition
+     *      the screen position of this
+     * 
+     * @author Andrew Loznianu
+     */
     void render(Vector screenPosition) const;
 };
 
@@ -87,8 +121,13 @@ public:
 	
 	Tile(Vector position, Vector size, FEHImage *texture);
 
-    /*
-     * TEMPORARY GRAPHICS CODE
+    /**
+     * Renders this.
+     * 
+     * @param screenPosition
+     *      the screen position of this
+     * 
+     * @author Andrew Loznianu
      */
 	void render(Vector screenPosition) const;
 };
@@ -120,7 +159,7 @@ public:
      */
     static std::unordered_map<const char*, FEHImage*> fileTextureMap;
 
-    /*
+    /**
      * Loads a level from a text file.
      * The default constructor creates a completely blank level.
      * If a fileName is provided, a level will be loaded from the file.
@@ -152,18 +191,24 @@ public:
 class Physics
 {
 public:
-    /*
+    /**
      * Simulate gravity on the player by changing its velocity.
+     * 
+     * @author Nathan Ramsey
      */
 	static void applyGravity();
-    /*
+    /**
      * Check collision between the player and a tile.
      * Calculates how the player is hitting the tile and moves the player accordingly.
      * Returns true if any part of the player's hitbox overlaps with the tile's hitbox.
+     * 
+     * @author Nathan Ramsey
      */
 	static bool checkCollision(Tile &tile);
-    /*
+    /**
      * Check collision between the player and any collectible item.
+     * 
+     * @author Nathan Ramsey
      */
 	static bool checkCollision(Collectible &collectible);
 };
@@ -172,8 +217,10 @@ public:
 class Logic
 {
 public:
-    /*
+    /**
      * Handle all non-physics game logic.
+     * 
+     * @author Nathan Ramsey
      */
 	static void updateLogic();
 };
@@ -191,16 +238,22 @@ public:
 	static bool running;
     // True if the player opts to go back to the main menu.
     static bool mainMenu;
-    /*
+    /**
      * Initializes the game.
+     * 
+     * @author Nathan Ramsey
      */
 	static void initialize();
-    /*
+    /**
      * Runs every frame and handles all aspects of the game.
+     * 
+     * @author Nathan Ramsey
      */
 	static void update();
-    /*
+    /**
      * Called when game is over
+     * 
+     * @author Nathan Ramsey
      */
 	static void cleanup();
 
@@ -218,8 +271,10 @@ public:
      * @author Andrew Loznianu
      */
     static void nextLevel();
-    /*
+    /**
      * Displays an end screen if the player fails to complete the game on time.
+     * 
+     * @author Nathan Ramsey
      */
     static void gameOver();
 
