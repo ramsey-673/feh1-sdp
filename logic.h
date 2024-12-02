@@ -26,8 +26,8 @@
 #define JUMP_STRENGTH 8
 #define NUMBER_JUMPS 2
 
-#define SECOND_VALUE 10
-#define DOLLAR_VALUE 100
+#define SECOND_VALUE 100
+#define DOLLAR_VALUE 10
 
 // The player
 class Player
