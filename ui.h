@@ -77,7 +77,6 @@ public:
     static void renderUI();
 };
 
-
 /**
  * Handles in-game user input.
  */

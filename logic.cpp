@@ -402,8 +402,6 @@ void Logic::updateLogic()
     }
 }
 
-
-
 /* Game */
 
 int Game::score { 0 };
